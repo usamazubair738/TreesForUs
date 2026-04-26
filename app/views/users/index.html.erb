@@ -1,0 +1,38 @@
+<h1>Users List</h1>
+
+<table border="1" cellpadding="10">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Identification Type</th>
+      <th>Identification Number</th>
+      <th>Status</th>
+      <th>Role</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.id %></td>
+        <td><%= user.first_name %></td>
+        <td><%= user.last_name %></td>
+        <td><%= user.identification_type %></td>
+        <td><%= user.identification_number %></td>
+        <td><%= user.status %></td>
+        <td><%= user.role %></td>
+        <td>
+          <%= link_to "Show", user_path(user) %> |
+          <%= link_to "Edit", edit_user_path(user) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to "Create New User", new_user_path %>

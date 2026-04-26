@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  get "user_profiles/index"
+  get "user_profiles/show"
+  get "user_profiles/new"
+  get "user_profiles/edit"
+  resources :users
+  devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

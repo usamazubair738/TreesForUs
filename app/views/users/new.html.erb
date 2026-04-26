@@ -1,0 +1,35 @@
+<h1>Create User</h1>
+
+<%= form_with model: @user do |f| %>
+  <div>
+    <%= f.label :first_name %>
+    <%= f.text_field :first_name %>
+  </div>
+
+  <div>
+    <%= f.label :last_name %>
+    <%= f.text_field :last_name %>
+  </div>
+
+  <div>
+    <%= f.label :identification_type %>
+    <%= f.number_field :identification_type %>
+  </div>
+
+  <div>
+    <%= f.label :identification_number %>
+    <%= f.text_field :identification_number %>
+  </div>
+
+  <div>
+    <%= f.label :status %>
+    <%= f.number_field :status %>
+  </div>
+
+  <div>
+    <%= f.label :role %>
+    <%= f.number_field :role %>
+  </div>
+
+  <%= f.submit "Create User" %>
+<% end %>
