@@ -1,0 +1,45 @@
+doctype html
+html
+  head
+    = csrf_meta_tags
+    = csp_meta_tag
+    script src="https://cdn.tailwindcss.com"
+
+  body.bg-gray-100.min-h-screen.flex.items-center.justify-center
+
+    / KEEP YOUR EXACT STRUCTURE
+    .mx-auto.bg-white.rounded-2xl.shadow-xl.overflow-hidden
+
+      .grid.grid-cols-2.gap-10
+
+        .p-10.flex.flex-col.justify-center
+
+          = image_tag "logo.png", class: "w-20 h-20 mx-auto mb-5"
+
+          h1.text-center.text-3xl.font-bold.text-green-900.mb-2
+            | Trees For Us
+
+          p.text-center.text-green-900.mb-2
+            | Discover. Connect. Belong.
+
+          p.text-center.text-gray-900.text-sm.mb-6
+            | Visualize your family. Explore your roots.
+            br
+            | Build your legacy for generations.
+
+          = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+            .space-y-4
+              = f.email_field :email,
+                placeholder: "Email address",
+                class: "w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+
+              = f.password_field :password,
+                placeholder: "Password",
+                class: "w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+
+              = f.submit "Sign in",
+                class: "w-full bg-green-900 hover:bg-green-800 text-white py-3 rounded-lg transition"
+
+        .bg-gray-50.flex.items-center.justify-center.p-10
+          = image_tag "login-page1.png",
+            class: "max-w-full max-h-[500px] object-contain"

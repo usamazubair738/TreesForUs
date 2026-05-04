@@ -3,8 +3,18 @@ Rails.application.routes.draw do
   get "user_profiles/show"
   get "user_profiles/new"
   get "user_profiles/edit"
+  devise_for :users, controllers: {
+  sessions: "users/sessions",
+  registrations: "users/registrations"
+}
   resources :users
-  devise_for :users
+  authenticated :user do
+  root to: 'dashboard#index', as: :authenticated_root
+    end
+
+    unauthenticated do
+      root to: redirect('/users/sign_in')
+    end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

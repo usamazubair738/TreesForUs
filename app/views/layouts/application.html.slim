@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    meta charset="utf-8"
+    meta name="viewport" content="width=device-width,initial-scale=1"
+
+    = csrf_meta_tags
+    = csp_meta_tag
+
+    / ✅ Use ONE method only
+
+    / OPTION A (recommended for now - CDN)
+    script src="https://cdn.tailwindcss.com"
+
+    /OPTION B (if using Rails Tailwind)
+    /= stylesheet_link_tag "application", "data-turbo-track": "reload"
+
+  body
+    = yield

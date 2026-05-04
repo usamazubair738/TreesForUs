@@ -49,6 +49,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+
+  gem 'byebug'
 end
 
 group :development do
@@ -63,3 +66,7 @@ group :test do
 end
 
 gem "devise", "~> 5.0"
+gem "tailwindcss-rails", "~> 3.3"
+gem "tailwindcss-ruby", "~> 3.4" 
+gem 'slim', '~> 3.0', '>= 3.0.6'
+gem "cssbundling-rails", "~> 1.4"
