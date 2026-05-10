@@ -1,0 +1,23 @@
+div
+  nav.bg-white.shadow-md.px-6.py-4.flex.items-center.justify-between
+    .flex.items-center.space-x-3
+      = image_tag "logo.png", class: "w-8 h-8"
+      span.font-bold.text-green-900.text-lg TreesForUs
+    .flex.items-center.space-x-6
+
+      = link_to "Settings", "#", class: "text-gray-700 hover:text-green-700"
+      = link_to user_profile_path(current_user), class: "flex items-center" do
+        - if @user_profile&.avatar&.attached?
+          = image_tag @user_profile.avatar,
+            class: "w-10 h-10 rounded-full border-2 border-green-700 object-cover"
+        - else
+          = image_tag "logo.png",
+            class: "w-10 h-10 rounded-full border-2 border-gray-300 object-cover"
+
+      = button_to "Logout",
+        destroy_user_session_path,
+        method: :delete,
+        class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
+  .p-8
+    h1.font-bold.text-4xl Dashboard#index
+    p.text-gray-600.mt-2 Find me in app/views/dashboard/index.html.erb

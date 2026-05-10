@@ -7,6 +7,9 @@ class User < ApplicationRecord
            class_name: "UserParentRelationship",
            foreign_key: :parent_id
 
+  has_one :user_profile, dependent: :destroy
+  after_create :build_default_profile
+
   has_many :parents, through: :parent_relationships
   has_many :children, through: :child_relationships
 
@@ -29,6 +32,22 @@ class User < ApplicationRecord
 
   def all_partners
     partners + inverse_partners
+  end
+  
+  def build_default_profile
+    create_user_profile(
+      birth_date: nil,
+      gender: nil,
+      marital_status: nil,
+      occupation: nil,
+      address: nil,
+      city: nil,
+      state: nil,
+      zip: nil,
+      country: nil,
+      phone: nil,
+      nationality: nil
+    )
   end
 
   devise :database_authenticatable, :registerable,

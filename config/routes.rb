@@ -1,9 +1,6 @@
 Rails.application.routes.draw do
   get "dashboard/index"
-  get "user_profiles/index"
-  get "user_profiles/show"
-  get "user_profiles/new"
-  get "user_profiles/edit"
+  resources :user_profiles
   devise_for :users, controllers: {
   sessions: "users/sessions",
   registrations: "users/registrations"
