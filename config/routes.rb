@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "dashboard/index"
   get "user_profiles/index"
   get "user_profiles/show"
   get "user_profiles/new"
