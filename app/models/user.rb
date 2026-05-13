@@ -20,14 +20,17 @@ class User < ApplicationRecord
   has_many :inverse_partners, through: :inverse_user_partners, source: :user
 
   enum :status, alive: 0, dead: 1
-  enum :identification_type, nric: 0, passport: 1, driving_license: 2
+  enum :identification_type, nric: 0, passport: 1, driving_license: 2, birth_certificate: 3
+
 
   def self.status_options
     statuses.keys.map { |s| [s.humanize, s] }
   end
 
-  def self.identification_types
-    identification_types.keys.map { |s| [s.humanize, s] }
+   def self.identification_type_options
+    identification_types.keys.map do |type|
+      [type.humanize, type]
+    end
   end
 
   def all_partners

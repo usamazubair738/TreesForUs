@@ -5,14 +5,15 @@ class UserProfilesController < ApplicationController
 
   def show
     @user = current_user
-    @user_profile = @user.user_profile
-
+    @user_profile = @user.user_profile || @user.create_user_profile
   end
 
   def new
   end
 
   def edit
+    @user = current_user
+    @user_profile = @user.user_profile 
   end
 
   def update
