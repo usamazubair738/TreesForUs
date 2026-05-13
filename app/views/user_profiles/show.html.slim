@@ -1,52 +1,117 @@
 div.min-h-screen.bg-gray-100.p-8
-  .max-w-4xl.mx-auto.bg-white.rounded-2xl.shadow-lg.p-8
+  .max-w-6xl.mx-auto.bg-white.rounded-2xl.shadow-lg.overflow-hidden
 
-    .flex.items-center.justify-between.mb-8
-      h1.text-3xl.font-bold.text-green-900 User Profile
+    / HEADER
+    .bg-green-900.px-8.py-6.flex.items-center.justify-between
+      div
+        h1.text-3xl.font-bold.text-white User Profile
+        p.text-green-100.text-sm.mt-1 Personal account overview
 
-      .flex.items-center.space-x-3
+      .flex.space-x-3
         = link_to "Edit Profile", edit_user_profile_path,
-          class: "bg-green-900 hover:bg-green-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition"
+          class: "bg-white text-green-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition"
 
         = link_to "Back", root_path,
-          class: "text-sm text-gray-600 hover:text-green-700"
+          class: "text-sm text-white hover:text-green-200 transition"
 
-    .flex.items-center.space-x-6.mb-8
-      .flex.flex-col.items-center
-        - if @user_profile&.avatar&.attached?
-          = image_tag @user_profile.avatar,
-            class: "w-24 h-24 rounded-full border-4 border-green-700 object-cover"
-        - else
-          = image_tag "logo.png",
-            class: "w-24 h-24 rounded-full border-4 border-green-700 object-cover"
+    / BODY
+    .p-8
 
-        = form_with model: @user_profile, url: user_profile_path, html: { multipart: true }, method: :patch do |f|
-          = f.file_field :avatar,
-            class: "mt-3 text-sm"
+      / TOP PROFILE STRIP
+      .flex.flex-col.md:flex-row.md:items-center.md:justify-between.gap-6.mb-10
 
-          = f.submit "Upload",
-            class: "mt-2 bg-green-900 hover:bg-green-800 text-white px-3 py-1 rounded-lg text-sm"
+        .flex.items-center.space-x-6
+          .flex-shrink-0
+            - if @user_profile&.avatar&.attached?
+              = image_tag @user_profile.avatar,
+                class: "w-28 h-28 rounded-full border-4 border-green-700 object-cover shadow"
+            - else
+              = image_tag "profile.png",
+                class: "w-28 h-28 rounded-full border-4 border-green-700 object-cover shadow"
 
-      .ml-6
-        h2.text-2xl.font-semibold = "#{@user.first_name} #{@user.last_name}"
-        p.text-gray-500 = @user.email
+          div
+            h2.text-2xl.font-bold.text-gray-800
+              = "#{@user.first_name} #{@user.last_name}"
 
-    hr.mb-6
+            p.text-gray-500 = @user.email
 
-    .grid.grid-cols-1.md:grid-cols-2.gap-6
+            .mt-2
+              span.inline-block.bg-green-100.text-green-800.text-xs.font-medium.px-3.py-1.rounded-full
+                = @user.identification_type&.humanize || "Not set"
 
-      .p-4.bg-gray-50.rounded-lg
-        p.text-sm.text-gray-500 First Name
-        p.font-medium = @user.first_name
+        / avatar upload
+        .mt-4.md:mt-0
+          = form_with model: @user_profile,
+                      url: user_profile_path,
+                      method: :patch,
+                      html: { multipart: true },
+                      local: true do |f|
 
-      .p-4.bg-gray-50.rounded-lg
-        p.text-sm.text-gray-500 Last Name
-        p.font-medium = @user.last_name
+            = f.file_field :avatar,
+              class: "text-sm text-gray-600"
 
-      .p-4.bg-gray-50.rounded-lg
-        p.text-sm.text-gray-500 Identification Type
-        p.font-medium = @user.identification_type.humanize
+            = f.submit "Upload Photo",
+              class: "mt-3 bg-green-900 hover:bg-green-800 text-white px-4 py-2 rounded-lg text-sm font-medium"
 
-      .p-4.bg-gray-50.rounded-lg
-        p.text-sm.text-gray-500 Identification Number
-        p.font-medium = @user.identification_number
+      hr.mb-10
+
+        .grid.grid-cols-2.gap-10
+          .col-span-1.grid.gap-4.content-start
+
+            h3.text-lg.font-semibold.text-gray-800.mb-2 Identity Information
+
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 First Name
+              p.font-medium.text-gray-900 = @user.first_name
+
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 Last Name
+              p.font-medium.text-gray-900 = @user.last_name
+
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 Gender
+              p.font-medium.text-gray-900 = @user_profile.gender.presence || "-"
+
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 Identification Type
+              p.font-medium.text-gray-900 = @user.identification_type&.humanize || "-"
+
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 Identification Number
+              p.font-medium.text-gray-900 = @user.identification_number || "-"
+
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 Birth Date
+              p.font-medium.text-gray-900
+                = @user_profile.birth_date&.strftime("%d %B %Y") || "-"
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 Marital Status
+              p.font-medium.text-gray-900 = @user_profile.marital_status.presence || "-"
+
+          .grid.gap-4.col-span-1.grid.gap-4.content-start
+
+            h3.text-lg.font-semibold.text-gray-800.mb-2 Contact & Details       
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 Nationality
+              p.font-medium.text-gray-900 = @user_profile.nationality.presence || "-"
+
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 Occupation
+              p.font-medium.text-gray-900 = @user_profile.occupation.presence || "-"
+
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 Phone
+              p.font-medium.text-gray-900 = @user_profile.phone.presence || "-"
+
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 Address
+              p.font-medium.text-gray-900 = @user_profile.address.presence || "-"
+
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 City / State / Country
+              p.font-medium.text-gray-900
+                = [@user_profile.city, @user_profile.state, @user_profile.country].compact.join(", ").presence || "-"
+
+            .p-5.bg-gray-50.rounded-xl
+              p.text-sm.text-gray-500 ZIP Code
+              p.font-medium.text-gray-900 = @user_profile.zip.presence || "-"
