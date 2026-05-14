@@ -1,27 +1,48 @@
+/ _family_tree_node.html.slim
+- profile = member.try(:user_profile)
+- children = member.try(:children) || []
+- came_from = local_assigns[:came_from_parent_id]
+- co_parents = children.flat_map { |c| c.try(:parents) || [] }.uniq { |p| p.id }.reject { |p| p.id == member.id || p.id == came_from }
+
 .tree-node data-depth=depth
-  - profile = member.try(:user_profile)
+  .couple-row
+    .card class=("root" if depth == 0)
+      .avatar
+        - if profile&.avatar&.attached?
+          = image_tag url_for(profile.avatar), alt: "#{member.first_name} #{member.last_name}", style: "width:48px;height:48px;border-radius:50%;object-fit:cover;"
+        - else
+          span = "#{member.first_name&.[](0)}#{member.last_name&.[](0)}"
+      .card-name = "#{member.first_name} #{member.last_name}"
+      .card-role = member.try(:relationship_label) || "Member"
+      .card-age
+        - birth = profile&.birth_date
+        = birth ? "Age #{((Date.today - birth) / 365.25).floor}" : ""
+      .tooltip
+        strong = "#{member.first_name} #{member.last_name}"
+        = profile&.occupation || "—"
 
-  .card class=("root" if depth == 0)
-    .avatar
-      - if profile&.avatar&.attached?
-        = image_tag url_for(profile.avatar),
-          alt: "#{member.first_name} #{member.last_name}",
-          style: "width:48px;height:48px;border-radius:50%;object-fit:cover;"
-      - else
-        span = "#{member.first_name&.[](0)}#{member.last_name&.[](0)}"
+    - if co_parents.any?
+      .couple-connector
+      - co_parents.each do |co_parent|
+        - co_profile = co_parent.try(:user_profile)
+        .card.co-parent-card
+          .avatar
+            - if co_profile&.avatar&.attached?
+              = image_tag url_for(co_profile.avatar), alt: "#{co_parent.first_name} #{co_parent.last_name}", style: "width:48px;height:48px;border-radius:50%;object-fit:cover;"
+            - else
+              span = "#{co_parent.first_name&.[](0)}#{co_parent.last_name&.[](0)}"
+          .card-name = "#{co_parent.first_name} #{co_parent.last_name}"
+          .card-role = co_parent.try(:relationship_label) || "Co-parent"
+          .card-age
+            - co_birth = co_profile&.birth_date
+            = co_birth ? "Age #{((Date.today - co_birth) / 365.25).floor}" : ""
+          .tooltip
+            strong = "#{co_parent.first_name} #{co_parent.last_name}"
+            = co_profile&.occupation || "—"
 
-    .card-name = "#{member.first_name} #{member.last_name}"
-    .card-role = member.try(:relationship_label) || "Member"
-    .card-age
-      - birth = profile&.birth_date
-      = birth ? "Age #{((Date.today - birth) / 365.25).floor}" : ""
-
-    .tooltip
-      strong = "#{member.first_name} #{member.last_name}"
-      = profile&.occupation || "—"
-
-  - children = member.try(:children) || []
   - if children.any?
+    .merge-connector
+      .merge-line-down
     .children-row
       - children.each do |child|
-        = render "family_tree_node", member: child, depth: depth + 1
+        = render "family_tree_node", member: child, depth: depth + 1, came_from_parent_id: member.id

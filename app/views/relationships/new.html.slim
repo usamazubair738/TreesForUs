@@ -1,0 +1,43 @@
+= form_with url: relationships_path, method: :post, local: true do |f|
+  .grid.grid-cols-2.gap-4
+
+    div
+      = f.label :parent_id, "Parent", class: "block text-sm font-medium text-gray-700 mb-2"
+      = f.select :parent_id,
+        options_from_collection_for_select(User.all, :id, :full_name),
+        { prompt: "Select Parent" },
+        { class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500", id: "parent_select" }
+
+    div
+      = f.label :child_id, "Child", class: "block text-sm font-medium text-gray-700 mb-2"
+      = f.select :child_id,
+        options_from_collection_for_select(User.all, :id, :full_name),
+        { prompt: "Select Child" },
+        { class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500", id: "child_select" }
+
+  = f.submit "Add Relationship",
+    class: "mt-4 bg-green-900 hover:bg-green-800 text-white px-6 py-3 rounded-xl font-medium shadow-md transition"
+
+javascript:
+  (function () {
+    const parentSelect = document.getElementById("parent_select");
+    const childSelect  = document.getElementById("child_select");
+
+    function filterChild() {
+      const selectedParentId = parentSelect.value;
+
+      Array.from(childSelect.options).forEach(function (option) {
+        if (option.value === "" ) return; // keep the prompt option
+        option.hidden   = option.value === selectedParentId;
+        option.disabled = option.value === selectedParentId;
+      });
+
+      // If the currently selected child is now the parent, reset it
+      if (childSelect.value === selectedParentId) {
+        childSelect.value = "";
+      }
+    }
+
+    parentSelect.addEventListener("change", filterChild);
+    filterChild();
+  })();

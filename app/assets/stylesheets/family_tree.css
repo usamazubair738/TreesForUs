@@ -5,28 +5,27 @@
   font-family: inherit;
 }
 
-/* Each node: card + connector line down to children */
 .tree-node {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Horizontal row of children */
 .children-row {
   display: flex;
   gap: 32px;
   position: relative;
-  padding-top: 32px;
+  padding-top: 0;
+  justify-content: center;
 }
 
-/* Vertical stem from parent card down */
-.tree-node > .card::after {
+/* Vertical stem from single parent card down */
+.tree-node > .couple-row > .card::after {
   content: '';
   display: block;
-  width: 1px;
+  width: 2px;
   height: 32px;
-  background: var(--color-border-secondary, #ddd);
+  background: #ddd;
   margin: 0 auto;
 }
 
@@ -35,20 +34,20 @@
   content: '';
   position: absolute;
   top: 0;
+  height: 2px;
+  background: #ddd;
   left: calc(50% - (var(--children-span, 100%) / 2));
-  height: 1px;
-  background: var(--color-border-secondary, #ddd);
   width: 100%;
 }
 
-/* Vertical stem from bar down to each child */
-.tree-node + .tree-node::before,
-.tree-node:first-child::before {
+/* Vertical stem down to each child */
+.tree-node:first-child::before,
+.tree-node + .tree-node::before {
   content: '';
   display: block;
-  width: 1px;
+  width: 2px;
   height: 32px;
-  background: var(--color-border-secondary, #ddd);
+  background: #ddd;
   margin: 0 auto;
 }
 
@@ -65,7 +64,7 @@
   transition: border-color 0.15s;
 }
 .card:hover { border-color: #999; }
-.card.root   { border-color: #3B8BD4; }
+.card.root  { border-color: #3B8BD4; }
 
 /* Avatar */
 .avatar {
@@ -102,3 +101,73 @@
   pointer-events: none;
 }
 .card:hover .tooltip { display: block; }
+
+/* ── Couple row ── */
+.couple-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  position: relative;
+}
+
+/* Horizontal bar between the two parent cards */
+.couple-connector {
+  width: 40px;
+  height: 2px;
+  background: #9ca3af;
+  flex-shrink: 0;
+}
+
+/* ── Merge connector (V-shape down to children) ── */
+.merge-connector {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+  height: 40px;
+  /* Only as wide as the two cards + connector between them */
+  width: calc(140px + 40px + 140px);
+  max-width: calc(140px + 40px + 140px);
+  margin: 0 auto;
+}
+
+/* Left arm: drops from left parent to center */
+.merge-line-left {
+  width: 50%;
+  height: 100%;
+  border-right: 2px solid #9ca3af;
+  border-bottom: 2px solid #9ca3af;
+  border-bottom-right-radius: 8px;
+  box-sizing: border-box;
+}
+
+/* Right arm: drops from right parent to center */
+.merge-line-right {
+  width: 50%;
+  height: 100%;
+  border-left: 2px solid #9ca3af;
+  border-bottom: 2px solid #9ca3af;
+  border-bottom-left-radius: 8px;
+  box-sizing: border-box;
+}
+
+/* Short vertical drop from merge point down to children */
+.merge-line-down {
+  width: 2px;
+  height: 32px;
+  background: #9ca3af;
+  margin: 0 auto;
+}
+
+/* Children row sits below */
+.children-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 32px;
+  padding-top: 0;
+  position: relative;
+}
