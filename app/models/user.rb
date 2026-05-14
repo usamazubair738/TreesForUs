@@ -79,6 +79,20 @@ class User < ApplicationRecord
     partners + inverse_partners
   end
   
+
+def full_name
+  "#{first_name} #{last_name}"
+end
+
+def initials
+  "#{first_name[0]}#{last_name[0]}".upcase
+end
+
+def age
+  return "-" unless birth_date
+  ((Date.today - birth_date) / 365.25).floor
+end
+
   def build_default_profile
     create_user_profile(
       birth_date: nil,

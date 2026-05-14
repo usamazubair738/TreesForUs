@@ -1,0 +1,104 @@
+/* family_tree.css */
+.tree-wrap {
+  overflow-x: auto;
+  padding: 2rem 1rem;
+  font-family: inherit;
+}
+
+/* Each node: card + connector line down to children */
+.tree-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Horizontal row of children */
+.children-row {
+  display: flex;
+  gap: 32px;
+  position: relative;
+  padding-top: 32px;
+}
+
+/* Vertical stem from parent card down */
+.tree-node > .card::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 32px;
+  background: var(--color-border-secondary, #ddd);
+  margin: 0 auto;
+}
+
+/* Horizontal bar across children */
+.children-row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: calc(50% - (var(--children-span, 100%) / 2));
+  height: 1px;
+  background: var(--color-border-secondary, #ddd);
+  width: 100%;
+}
+
+/* Vertical stem from bar down to each child */
+.tree-node + .tree-node::before,
+.tree-node:first-child::before {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 32px;
+  background: var(--color-border-secondary, #ddd);
+  margin: 0 auto;
+}
+
+/* Card styles */
+.card {
+  width: 140px;
+  border: 0.5px solid #ddd;
+  border-radius: 12px;
+  padding: 14px 10px;
+  text-align: center;
+  background: #fff;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.card:hover { border-color: #999; }
+.card.root   { border-color: #3B8BD4; }
+
+/* Avatar */
+.avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  margin: 0 auto 8px;
+  overflow: hidden;
+  background: #E6F1FB;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 500; font-size: 18px; color: #185FA5;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.card-name { font-size: 13px; font-weight: 500; }
+.card-role { font-size: 11px; color: #888; margin-top: 2px; }
+.card-age  { font-size: 11px; color: #aaa; }
+
+/* Tooltip on hover */
+.tooltip {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%; transform: translateX(-50%);
+  background: #fff;
+  border: 0.5px solid #ccc;
+  border-radius: 8px;
+  padding: 10px 12px;
+  width: 180px;
+  z-index: 50;
+  font-size: 12px;
+  text-align: left;
+  color: #555;
+  line-height: 1.6;
+  pointer-events: none;
+}
+.card:hover .tooltip { display: block; }

@@ -1,0 +1,6 @@
+/ Expects: @root_member (the top ancestor)
+/ Each member has: .children, .avatar (ActiveStorage), .first_name, .last_name,
+/                  .birth_date, .relationship_label, .occupation
+
+.tree-wrap
+  = render "family_tree_node", member: @root_member, depth: 0

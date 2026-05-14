@@ -1,0 +1,27 @@
+.tree-node data-depth=depth
+  - profile = member.try(:user_profile)
+
+  .card class=("root" if depth == 0)
+    .avatar
+      - if profile&.avatar&.attached?
+        = image_tag url_for(profile.avatar),
+          alt: "#{member.first_name} #{member.last_name}",
+          style: "width:48px;height:48px;border-radius:50%;object-fit:cover;"
+      - else
+        span = "#{member.first_name&.[](0)}#{member.last_name&.[](0)}"
+
+    .card-name = "#{member.first_name} #{member.last_name}"
+    .card-role = member.try(:relationship_label) || "Member"
+    .card-age
+      - birth = profile&.birth_date
+      = birth ? "Age #{((Date.today - birth) / 365.25).floor}" : ""
+
+    .tooltip
+      strong = "#{member.first_name} #{member.last_name}"
+      = profile&.occupation || "—"
+
+  - children = member.try(:children) || []
+  - if children.any?
+    .children-row
+      - children.each do |child|
+        = render "family_tree_node", member: child, depth: depth + 1
