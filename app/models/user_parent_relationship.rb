@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: user_parent_child_relationships
+#
+#  id         :integer          not null, primary key
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  child_id   :integer
+#  parent_id  :integer
+#
+# Indexes
+#
+#  idx_on_parent_id_child_id_94af4b48a2  (parent_id,child_id) UNIQUE
+#
 class UserParentRelationship < ApplicationRecord
   self.table_name = "user_parent_child_relationships"
 

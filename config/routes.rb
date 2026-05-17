@@ -7,7 +7,9 @@ Rails.application.routes.draw do
     registrations: "users/registrations"
   }
 
-  resources :users
+  resources :users do
+    resources :user_partners, only: [:new, :create]
+  end
   resources :relationships, only: [:create, :destroy, :new]
 
   authenticated :user do

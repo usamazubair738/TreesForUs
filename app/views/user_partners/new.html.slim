@@ -1,0 +1,26 @@
+.container.mx-auto.max-w-lg.py-8
+  .bg-white.shadow.rounded-xl.p-6
+
+    h1.text-2xl.font-bold.mb-6
+      | Add Spouse
+
+    = form_with model: [@user, @user_partner], local: true do |f|
+
+      .mb-4
+        = f.label :partner_id, "Select Spouse",
+          class: "block font-medium mb-2"
+
+        = f.collection_select :partner_id,
+          @available_users,
+          :id,
+          :full_name,
+          { prompt: "Choose spouse" },
+          class: "w-full border rounded-lg px-3 py-2"
+
+      .flex.gap-3.mt-6
+        = f.submit "Add Spouse",
+          class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+
+        = link_to "Cancel",
+          user_path(@user),
+          class: "bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg"

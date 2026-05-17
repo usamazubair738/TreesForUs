@@ -1,6 +1,6 @@
 class UserPartner < ApplicationRecord
-  belongs_to :user
-  belongs_to :partner, class_name: 'User'
+  belongs_to :user, class_name: "User"
+  belongs_to :partner, class_name: "User"
 
   validate :cannot_partner_with_self
 

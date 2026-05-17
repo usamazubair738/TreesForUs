@@ -1,9 +1,130 @@
-/* family_tree.css */
-.tree-wrap {
-  overflow-x: auto;
-  padding: 2rem 1rem;
-  font-family: inherit;
+/* ============================================================
+   FAMILY TREE — COMPLETE STYLES
+   ============================================================ */
+
+:root {
+  --card-w: 150px;
+  --card-radius: 14px;
+
+  --wire: #cfc6bb;
+  --wire-px: 2px;
+
+  --stem-h: 42px;
+  --arm-h: 28px;
+  --col-gap: 42px;
+
+  --bg: #f6f4f1;
+
+  --card-bg: #ffffff;
+  --card-border: #e7e0d7;
+
+  --card-shadow: 0 2px 10px rgba(0,0,0,.05);
+  --card-hover: 0 8px 24px rgba(0,0,0,.12);
+
+  --root-bg: #1d1c30;
+  --root-text: #ffffff;
+  --root-sub: #9fa8da;
+
+  --partner-bg: #eef2ff;
+  --partner-bdr: #ccd6ff;
+
+  --avatar-bg: #e4ddd4;
+  --avatar-size: 46px;
+
+  --text-name: #181716;
+  --text-role: #6f6a64;
+  --text-age: #9d978f;
 }
+
+/* ============================================================
+   PAGE
+   ============================================================ */
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+/* ============================================================
+   SCROLL CONTAINER
+   ============================================================ */
+
+.family-tree-scroll {
+  width: 100%;
+  min-height: 100vh;
+
+  overflow-x: auto;
+  overflow-y: visible;
+
+  padding: 48px 40px 90px;
+
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   MAIN TREE WRAPPER
+   ============================================================ */
+
+.family-tree {
+  display: flex;
+  justify-content: center;
+  min-width: max-content;
+}
+
+/* ============================================================
+   CONNECTOR SVG
+   ============================================================ */
+
+#tree-connectors {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  pointer-events: none;
+  overflow: visible;
+
+  z-index: 0;
+}
+
+/* SVG PATHS */
+
+#tree-connectors path,
+#tree-connectors line {
+  stroke: var(--wire);
+  stroke-width: var(--wire-px);
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ============================================================
+   LAYERING
+   ============================================================ */
+
+.tree-node,
+.children-row,
+.child-column,
+.couple-row,
+.card {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   TREE NODE
+   ============================================================ */
 
 .tree-node {
   display: flex;
@@ -11,163 +132,474 @@
   align-items: center;
 }
 
-.children-row {
-  display: flex;
-  gap: 32px;
-  position: relative;
-  padding-top: 0;
-  justify-content: center;
-}
+/* ============================================================
+   COUPLE ROW
+   ============================================================ */
 
-/* Vertical stem from single parent card down */
-.tree-node > .couple-row > .card::after {
-  content: '';
-  display: block;
-  width: 2px;
-  height: 32px;
-  background: #ddd;
-  margin: 0 auto;
-}
-
-/* Horizontal bar across children */
-.children-row::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  height: 2px;
-  background: #ddd;
-  left: calc(50% - (var(--children-span, 100%) / 2));
-  width: 100%;
-}
-
-/* Vertical stem down to each child */
-.tree-node:first-child::before,
-.tree-node + .tree-node::before {
-  content: '';
-  display: block;
-  width: 2px;
-  height: 32px;
-  background: #ddd;
-  margin: 0 auto;
-}
-
-/* Card styles */
-.card {
-  width: 140px;
-  border: 0.5px solid #ddd;
-  border-radius: 12px;
-  padding: 14px 10px;
-  text-align: center;
-  background: #fff;
-  position: relative;
-  cursor: pointer;
-  transition: border-color 0.15s;
-}
-.card:hover { border-color: #999; }
-.card.root  { border-color: #3B8BD4; }
-
-/* Avatar */
-.avatar {
-  width: 56px; height: 56px;
-  border-radius: 50%;
-  margin: 0 auto 8px;
-  overflow: hidden;
-  background: #E6F1FB;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 500; font-size: 18px; color: #185FA5;
-}
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-.card-name { font-size: 13px; font-weight: 500; }
-.card-role { font-size: 11px; color: #888; margin-top: 2px; }
-.card-age  { font-size: 11px; color: #aaa; }
-
-/* Tooltip on hover */
-.tooltip {
-  display: none;
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 50%; transform: translateX(-50%);
-  background: #fff;
-  border: 0.5px solid #ccc;
-  border-radius: 8px;
-  padding: 10px 12px;
-  width: 180px;
-  z-index: 50;
-  font-size: 12px;
-  text-align: left;
-  color: #555;
-  line-height: 1.6;
-  pointer-events: none;
-}
-.card:hover .tooltip { display: block; }
-
-/* ── Couple row ── */
 .couple-row {
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 0;
-  position: relative;
 }
 
-/* Horizontal bar between the two parent cards */
+/* ============================================================
+   COUPLE CONNECTOR
+   ============================================================ */
+
 .couple-connector {
-  width: 40px;
-  height: 2px;
-  background: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
-/* ── Merge connector (V-shape down to children) ── */
-.merge-connector {
+.couple-line {
+  width: 22px;
+  height: 2px;
+  background: var(--wire);
+}
+
+.couple-heart {
+  font-size: 11px;
+  line-height: 1;
+  color: #c27a81;
+  padding: 0 4px;
+  user-select: none;
+}
+
+/* ============================================================
+   CARD WRAPPER  (hover trigger for dynamic buttons)
+   ============================================================ */
+
+.card-wrapper {
   position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  /* extra breathing room so absolutely-positioned buttons don't clip */
+  padding: 0 48px 44px;
+  margin: 0 -48px -44px; /* cancel the padding from surrounding layout */
+}
+
+/* ============================================================
+   CARD
+   ============================================================ */
+
+.card {
+  width: var(--card-w);
+
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+
+  box-shadow: var(--card-shadow);
+
+  padding: 14px 10px 12px;
+
   display: flex;
-  flex-direction: row;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+
+  position: relative;
+  overflow: visible;
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease;
+
+  flex-shrink: 0;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--card-hover);
+}
+
+/* ============================================================
+   ROOT CARD
+   ============================================================ */
+
+.card.root {
+  background: var(--root-bg);
+  border-color: #34345c;
+}
+
+.card.root .card-name {
+  color: var(--root-text);
+}
+
+.card.root .card-role,
+.card.root .card-age {
+  color: var(--root-sub);
+}
+
+.card.root .avatar-initials {
+  background: #353561;
+  color: #d7ddff;
+}
+
+/* ============================================================
+   PARTNER CARD
+   ============================================================ */
+
+.card.partner-card {
+  background: var(--partner-bg);
+  border-color: var(--partner-bdr);
+}
+
+/* ============================================================
+   AVATAR
+   ============================================================ */
+
+.avatar {
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+
+  border-radius: 999px;
+  overflow: hidden;
+
+  flex-shrink: 0;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-initials {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
   justify-content: center;
-  height: 40px;
-  /* Only as wide as the two cards + connector between them */
-  width: calc(140px + 40px + 140px);
-  max-width: calc(140px + 40px + 140px);
-  margin: 0 auto;
+
+  border-radius: 999px;
+
+  background: var(--avatar-bg);
+
+  font-size: 14px;
+  font-weight: 700;
+
+  color: var(--text-role);
+
+  text-transform: uppercase;
 }
 
-/* Left arm: drops from left parent to center */
-.merge-line-left {
-  width: 50%;
-  height: 100%;
-  border-right: 2px solid #9ca3af;
-  border-bottom: 2px solid #9ca3af;
-  border-bottom-right-radius: 8px;
-  box-sizing: border-box;
+/* ============================================================
+   TEXT
+   ============================================================ */
+
+.card-name {
+  max-width: 100%;
+
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+
+  color: var(--text-name);
+
+  text-align: center;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Right arm: drops from right parent to center */
-.merge-line-right {
-  width: 50%;
-  height: 100%;
-  border-left: 2px solid #9ca3af;
-  border-bottom: 2px solid #9ca3af;
-  border-bottom-left-radius: 8px;
-  box-sizing: border-box;
+.card-role {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-role);
+  text-align: center;
 }
 
-/* Short vertical drop from merge point down to children */
-.merge-line-down {
-  width: 2px;
-  height: 32px;
-  background: #9ca3af;
-  margin: 0 auto;
+.card-age {
+  font-size: 10px;
+  color: var(--text-age);
 }
 
-/* Children row sits below */
+/* ============================================================
+   TOOLTIP
+   ============================================================ */
+
+.tooltip {
+  position: absolute;
+
+  bottom: calc(100% + 10px);
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  background: #1d1c30;
+  color: white;
+
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  font-size: 11px;
+  line-height: 1.45;
+
+  white-space: nowrap;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity .16s ease,
+    transform .16s ease;
+
+  pointer-events: none;
+
+  z-index: 1000;
+
+  box-shadow: 0 8px 28px rgba(0,0,0,.18);
+}
+
+.tooltip::after {
+  content: "";
+
+  position: absolute;
+
+  top: 100%;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  border: 5px solid transparent;
+  border-top-color: #1d1c30;
+}
+
+.tooltip strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 12px;
+}
+
+.card:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+/* ============================================================
+   ADD BUTTONS — base
+   ============================================================ */
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 4px 9px;
+
+  background: var(--card-bg);
+  border: 1.5px dashed var(--wire);
+  border-radius: 20px;
+
+  color: var(--text-role);
+  font-size: 10px;
+  font-weight: 600;
+  font-family: inherit;
+
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    color .15s ease,
+    box-shadow .15s ease;
+}
+
+.btn-add:hover {
+  background: #f0edff;
+  border-color: var(--partner-bdr);
+  color: #3d3d8f;
+  box-shadow: 0 4px 10px rgba(0,0,0,.1);
+}
+
+.btn-add__icon {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--text-age);
+}
+
+.btn-add__label {
+  line-height: 1;
+}
+
+/* ============================================================
+   ADD BUTTONS — dynamic (hidden until card-wrapper hovered)
+   ============================================================ */
+
+.btn-add--dynamic {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+
+  transition:
+    opacity .18s ease,
+    transform .18s ease;
+
+  z-index: 10;
+}
+
+/* Spouse: horizontally right of the card, vertically centred */
+.btn-add--spouse {
+  top: 50%;
+  /* sits just past the card edge; the -48px padding on .card-wrapper gives space */
+  right: 0;
+  transform: translateY(calc(-50% - 22px)) scale(0.85);
+}
+
+/* Child: horizontally centred, below the card */
+.btn-add--child {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scale(0.85);
+}
+
+/* Reveal on hover or keyboard focus */
+.card-wrapper:hover .btn-add--dynamic,
+.card-wrapper:focus-within .btn-add--dynamic {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.card-wrapper:hover .btn-add--spouse,
+.card-wrapper:focus-within .btn-add--spouse {
+  transform: translateY(calc(-50% - 22px)) scale(1);
+}
+
+.card-wrapper:hover .btn-add--child,
+.card-wrapper:focus-within .btn-add--child {
+  transform: translateX(-50%) scale(1);
+}
+
+/* ============================================================
+   CHILDREN BRANCH
+   ============================================================ */
+
+.children-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-top: var(--stem-h);
+}
+
+/* ============================================================
+   CHILDREN ROW
+   ============================================================ */
+
 .children-row {
   display: flex;
-  flex-direction: row;
+  align-items: flex-start;
   justify-content: center;
-  gap: 32px;
-  padding-top: 0;
+
+  gap: var(--col-gap);
+
   position: relative;
+}
+
+/* ============================================================
+   CHILD COLUMN
+   ============================================================ */
+
+.child-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  min-width: var(--card-w);
+
+  padding-top: var(--arm-h);
+
+  position: relative;
+}
+
+/* ============================================================
+   PURE CSS CONNECTORS (Fallback if JS missing)
+   ============================================================ */
+
+.child-column::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 50%;
+
+  width: 2px;
+  height: var(--arm-h);
+
+  background: var(--wire);
+
+  transform: translateX(-50%);
+}
+
+.children-row::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: calc(var(--card-w) / 2);
+
+  width: calc(100% - var(--card-w));
+  height: 2px;
+
+  background: var(--wire);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 900px) {
+  :root {
+    --card-w: 132px;
+    --col-gap: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --card-w: 116px;
+
+    --col-gap: 18px;
+
+    --stem-h: 28px;
+    --arm-h: 18px;
+
+    --avatar-size: 40px;
+  }
+
+  .card {
+    padding: 10px 8px;
+    border-radius: 12px;
+  }
+
+  .card-name {
+    font-size: 11px;
+  }
+
+  .card-role,
+  .card-age {
+    font-size: 9px;
+  }
+
+  /* tighten wrapper offsets on mobile */
+  .card-wrapper {
+    padding: 0 36px 36px;
+    margin: 0 -36px -36px;
+  }
 }

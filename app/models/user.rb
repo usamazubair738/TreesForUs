@@ -55,15 +55,26 @@ class User < ApplicationRecord
   has_many :parents, through: :parent_relationships
   has_many :children, through: :child_relationships
 
-  has_many :user_partners
-  has_many :partners, through: :user_partners, source: :partner
+  has_many :user_partners,         class_name: "UserPartner", foreign_key: :user_id,    dependent: :destroy
+  has_many :inverse_user_partners, class_name: "UserPartner", foreign_key: :partner_id, dependent: :destroy
 
-  has_many :inverse_user_partners, class_name: 'UserPartner', foreign_key: 'partner_id'
+  has_many :partners,         through: :user_partners,         source: :partner
   has_many :inverse_partners, through: :inverse_user_partners, source: :user
 
   enum :status, alive: 0, dead: 1
   enum :identification_type, nric: 0, passport: 1, driving_license: 2, birth_certificate: 3
+  has_many :family_memberships, dependent: :destroy
+  has_many :families, through: :family_memberships
 
+  validate :cannot_have_more_than_two_families
+
+  private
+
+  def cannot_have_more_than_two_families
+    return if families.size <= 2
+
+    errors.add(:families, "cannot exceed 2")
+  end
 
   def self.status_options
     statuses.keys.map { |s| [s.humanize, s] }

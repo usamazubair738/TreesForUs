@@ -1,48 +1,82 @@
-/ _family_tree_node.html.slim
-- profile = member.try(:user_profile)
-- children = member.try(:children) || []
-- came_from = local_assigns[:came_from_parent_id]
-- co_parents = children.flat_map { |c| c.try(:parents) || [] }.uniq { |p| p.id }.reject { |p| p.id == member.id || p.id == came_from }
+/ app/views/dashboard/_family_tree_node.html.slim
 
-.tree-node data-depth=depth
-  .couple-row
-    .card class=("root" if depth == 0)
-      .avatar
-        - if profile&.avatar&.attached?
-          = image_tag url_for(profile.avatar), alt: "#{member.first_name} #{member.last_name}", style: "width:48px;height:48px;border-radius:50%;object-fit:cover;"
-        - else
-          span = "#{member.first_name&.[](0)}#{member.last_name&.[](0)}"
-      .card-name = "#{member.first_name} #{member.last_name}"
-      .card-role = member.try(:relationship_label) || "Member"
-      .card-age
-        - birth = profile&.birth_date
-        = birth ? "Age #{((Date.today - birth) / 365.25).floor}" : ""
-      .tooltip
-        strong = "#{member.first_name} #{member.last_name}"
-        = profile&.occupation || "—"
+- node_user = node[:user]
+- profile   = node[:profile]
+- children  = node[:children] || []
+- partners  = node[:partners] || []
 
-    - if co_parents.any?
-      .couple-connector
-      - co_parents.each do |co_parent|
-        - co_profile = co_parent.try(:user_profile)
-        .card.co-parent-card
+.tree-node data-depth=depth data-user-id=node_user.id
+
+  / ── MEMBER + CHILDREN WRAPPER ─────────────────────────────
+  / Groups the couple-row and children-branch as siblings so
+  / the stem is anchored under the member card only, not the
+  / midpoint of the whole couple row.
+  .member-and-children
+
+    / ── COUPLE ROW ──────────────────────────────────────────
+    .couple-row
+
+      / Main card wrapper — hover triggers button reveal
+      .card-wrapper.js-card-hover
+        .card class=("root" if depth == 0)
           .avatar
-            - if co_profile&.avatar&.attached?
-              = image_tag url_for(co_profile.avatar), alt: "#{co_parent.first_name} #{co_parent.last_name}", style: "width:48px;height:48px;border-radius:50%;object-fit:cover;"
+            - if profile&.avatar&.attached?
+              = image_tag url_for(profile.avatar), class: "avatar-img"
             - else
-              span = "#{co_parent.first_name&.[](0)}#{co_parent.last_name&.[](0)}"
-          .card-name = "#{co_parent.first_name} #{co_parent.last_name}"
-          .card-role = co_parent.try(:relationship_label) || "Co-parent"
-          .card-age
-            - co_birth = co_profile&.birth_date
-            = co_birth ? "Age #{((Date.today - co_birth) / 365.25).floor}" : ""
+              .avatar-initials
+                = "#{node_user&.first_name&.first}#{node_user&.last_name&.first}"
+          .card-name = "#{node_user.first_name} #{node_user.last_name}"
+          .card-role = "Member"
+          - if profile&.birth_date
+            .card-age = "Age #{((Date.today - profile.birth_date) / 365.25).floor}"
           .tooltip
-            strong = "#{co_parent.first_name} #{co_parent.last_name}"
-            = co_profile&.occupation || "—"
+            strong = "#{node_user.first_name} #{node_user.last_name}"
+            div = profile&.occupation || "—"
 
-  - if children.any?
-    .merge-connector
-      .merge-line-down
-    .children-row
-      - children.each do |child|
-        = render "family_tree_node", member: child, depth: depth + 1, came_from_parent_id: member.id
+        / Add Spouse — appears on hover, inline beside card
+        = link_to new_user_user_partner_path(node_user, type: "partner"),
+            class: "btn-add btn-add--spouse btn-add--dynamic",
+            title: "Add spouse / partner",
+            data: { turbo_frame: "modal" } do
+          span.btn-add__icon +
+          span.btn-add__label Spouse
+
+        / Add Child — appears on hover, below card
+        = link_to new_relationship_path(user_id: node_user.id, type: "child"),
+            class: "btn-add btn-add--child btn-add--dynamic",
+            title: "Add child",
+            data: { turbo_frame: "modal" } do
+          span.btn-add__icon +
+          span.btn-add__label Child
+
+      / Partner(s)
+      - partners.each do |partner|
+        - p_profile = partner.user_profile
+        .couple-connector
+          .couple-line
+          .couple-heart ♥
+        .card.partner-card
+          .avatar
+            - if p_profile&.avatar&.attached?
+              = image_tag url_for(p_profile.avatar), class: "avatar-img"
+            - else
+              .avatar-initials
+                = "#{partner&.first_name&.first}#{partner&.last_name&.first}"
+          .card-name = "#{partner.first_name} #{partner.last_name}"
+          .card-role = "Partner"
+          - if p_profile&.birth_date
+            .card-age = "Age #{((Date.today - p_profile.birth_date) / 365.25).floor}"
+          .tooltip
+            strong = "#{partner.first_name} #{partner.last_name}"
+            div = p_profile&.occupation || "—"
+
+    / ── CHILDREN SUBTREE ────────────────────────────────────
+    / Sibling of .couple-row inside .member-and-children.
+    / CSS pins this stem to the member card centre via
+    / margin-left + translateX(-50%) on .children-branch.
+    - if children.any?
+      .children-branch
+        .children-row
+          - children.each do |child_node|
+            .child-column
+              = render "family_tree_node", node: child_node, depth: depth + 1
