@@ -1,3 +1,24 @@
+# == Schema Information
+#
+# Table name: user_partners
+#
+#  id         :integer          not null, primary key
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  partner_id :integer          not null
+#  user_id    :integer          not null
+#
+# Indexes
+#
+#  index_user_partners_on_partner_id              (partner_id)
+#  index_user_partners_on_user_id                 (user_id)
+#  index_user_partners_on_user_id_and_partner_id  (user_id,partner_id) UNIQUE
+#
+# Foreign Keys
+#
+#  partner_id  (partner_id => users.id)
+#  user_id     (user_id => users.id)
+#
 class UserPartner < ApplicationRecord
   belongs_to :user, class_name: "User"
   belongs_to :partner, class_name: "User"

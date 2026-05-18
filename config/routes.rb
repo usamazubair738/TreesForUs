@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :families
+  resources :family_memberships
   get "dashboard/index"
   resources :user_profiles
   
