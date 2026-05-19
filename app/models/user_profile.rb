@@ -28,4 +28,27 @@
 class UserProfile < ApplicationRecord
   has_one_attached :avatar
   belongs_to :user
+
+  def self.ransackable_attributes(auth_object = nil)
+  [
+    "id",
+    "user_id",
+    "birth_date",
+    "gender",
+    "marital_status",
+    "occupation",
+    "address",
+    "city",
+    "state",
+    "zip",
+    "country",
+    "phone",
+    "nationality",
+    "created_by",
+    "updated_by",
+    "current_status",
+    "created_at",
+    "updated_at"
+  ]
+end
 end

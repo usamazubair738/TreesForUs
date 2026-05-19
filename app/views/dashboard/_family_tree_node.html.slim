@@ -6,7 +6,11 @@
 - partners  = node[:partners] || []
 
 .tree-node data-depth=depth data-user-id=node_user.id
-
+  .family-header
+      .family-badge
+        span
+          = node_user.families.first.name
+    
   / ── MEMBER + CHILDREN WRAPPER ─────────────────────────────
   / Groups the couple-row and children-branch as siblings so
   / the stem is anchored under the member card only, not the

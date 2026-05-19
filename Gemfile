@@ -73,3 +73,6 @@ gem 'slim', '~> 3.0', '>= 3.0.6'
 gem "cssbundling-rails", "~> 1.4"
 
 gem "annotaterb"
+gem "activeadmin"
+gem "sassc-rails"
+gem "sprockets-rails"

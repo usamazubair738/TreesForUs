@@ -22,12 +22,10 @@
 class FamilyMembership < ApplicationRecord
   belongs_to :user
   belongs_to :family
-
-  enum membership_type: {
-    birth: 0,
-    marriage: 1
-  }
-
+ enum :membership_type, {
+  birth: 0,
+  marriage: 1
+}
   validates :user_id, uniqueness: {
     scope: :family_id
   }

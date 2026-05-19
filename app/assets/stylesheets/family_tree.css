@@ -603,3 +603,60 @@ body {
     margin: 0 -36px -36px;
   }
 }
+/* ─────────────────────────────────────────
+   FAMILY HEADER
+───────────────────────────────────────── */
+
+.family-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.family-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 24px;
+
+  background: linear-gradient(
+    135deg,
+    #14532d,
+    #166534
+  );
+
+  color: white;
+
+  border-radius: 999px;
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  animation: fadeInDown 0.4s ease;
+}
+
+.family-icon {
+  font-size: 22px;
+}
+
+.family-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

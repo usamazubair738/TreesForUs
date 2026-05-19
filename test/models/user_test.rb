@@ -9,8 +9,8 @@
 #  created_by             :integer
 #  current_sign_in_at     :datetime
 #  current_sign_in_ip     :string
-#  email                  :string           default(""), not null
-#  encrypted_password     :string           default(""), not null
+#  email                  :string
+#  encrypted_password     :string
 #  failed_attempts        :integer          default(0), not null
 #  first_name             :string           not null
 #  identification_number  :string           not null
@@ -19,10 +19,11 @@
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :string
 #  locked_at              :datetime
+#  login_enabled          :boolean          default(FALSE), not null
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
-#  role                   :integer          default(0), not null
+#  role                   :integer          default("user"), not null
 #  sign_in_count          :integer          default(0), not null
 #  status                 :integer          default("alive"), not null
 #  unconfirmed_email      :string
