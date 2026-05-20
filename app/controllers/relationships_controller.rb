@@ -1,26 +1,91 @@
 class RelationshipsController < ApplicationController
   before_action :authenticate_user!
+def new
 
-  def new
-    @user = current_user
+  @user = User.new
+  @user.build_user_profile
+  parent_id = params[:parent_id].presence || params[:user_id]
+  @parent = User.find_by(id: parent_id)
+  @family_id =params[:family_id].presence || current_user.family_ids.first
+  @active_family =
+    current_user.families.find_by(id: @family_id)
+end
+ 
+def create
+  @user = User.new(user_params)
+  @user.login_enabled = ActiveModel::Type::Boolean.new.cast(
+    params[:user][:login_enabled]
+  )
+  unless @user.login_enabled?
+    @user.email = nil
+    @user.password = nil
+    @user.password_confirmation = nil
   end
+  @user.role = @user.login_enabled? ? "family_manager" : "viewer"
+  @family_id = params[:family_id].presence || current_user.family_ids.first
 
-  def create
-    parent = User.find(params[:parent_id])
-    child  = User.find(params[:child_id])
-
-    relationship = UserParentRelationship.new(parent: parent, child: child)
-
-    if relationship.save
-      redirect_to dashboard_index_path, notice: "#{child.first_name} added as child of #{parent.first_name}"
-    else
-      redirect_to dashboard_index_path, alert: relationship.errors.full_messages.join(", ")
+  @family = current_user.families.find_by(id: @family_id)
+  @parent = User.find_by(
+  id: params[:parent_id] || params[:user_id]
+)
+  if @user.save
+    FamilyMembership.create!(
+      user: @user,
+      family: @family,
+      membership_type: "birth"
+    )
+    if @parent.present?
+      UserParentRelationship.create!(
+        parent_id: @parent.id,
+        child_id: @user.id
+      )
     end
+
+    redirect_to dashboard_index_path,
+                notice: "Member created successfully."
+
+  else
+
+    render :new,
+           status: :unprocessable_entity
+  end
+end
+  private
+ 
+def user_params
+  params.require(:user).permit(
+    :id,
+    :first_name, :last_name,
+    :identification_type, :identification_number,
+    :status, :login_enabled,
+    :role,
+    :email, :password, :password_confirmation,
+    user_profile_attributes: [:birth_date, :gender, :phone, :occupation, :address, :avatar]
+  )
   end
 
-  def destroy
-    relationship = UserParentRelationship.find(params[:id])
-    relationship.destroy
-    redirect_to dashboard_index_path, notice: "Relationship removed"
-  end
+  def user_partner_params
+  params.require(:user_partner).permit(
+    :partner_id,
+    :family_id,
+    :membership_type,
+    partner_attributes: [
+      :first_name,
+      :last_name,
+      :identification_type,
+      :identification_number,
+      :email,
+      :password,
+      :password_confirmation,
+      user_profile_attributes: [
+        :birth_date,
+        :gender,
+        :phone,
+        :occupation,
+        :address,
+        :avatar
+      ]
+    ]
+  )
+end
 end

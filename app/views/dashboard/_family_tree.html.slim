@@ -1,3 +1,59 @@
-= render "family_tree_node",
-    node: @family_tree,
-    depth: 0
+/ =========================================================
+/ FAMILY HEADER
+/ =========================================================
+
+.dashboard-family-bar
+
+  .family-bar-left
+
+
+  .family-bar-right
+
+    - if current_user.families.any?
+
+      - if current_user.families.count == 1
+        .single-family-badge
+          span.badge-label Current Family
+          span.badge-name = current_user.families.first.name
+
+      - else
+        = form_with url: dashboard_path, method: :get, local: true, class: "family-switcher-form" do
+          = select_tag :family_id,
+            options_from_collection_for_select(current_user.families, :id, :name, @active_family&.id),
+            onchange: "this.form.submit()",
+            class: "family-select"
+
+    - if current_user.families.count < 2
+      = link_to new_family_path, class: "btn-create-family", data: { turbo_frame: "modal" } do
+        span +
+        | Create Family
+
+/ =========================================================
+/ FAMILY TREE ROOT
+/ =========================================================
+
+- if @active_family.present?
+
+  - if @family_tree.present?
+    = render "family_tree_node",
+        node: @family_tree,
+        depth: 0,
+        family: @active_family
+
+  - else
+    .empty-family-state
+      .empty-icon 🌳
+      h2 No Members Yet
+      p This family has no members yet. Add one to start building your tree.
+
+- else
+
+  .empty-family-state
+    .empty-icon 🌳
+    h2 No Family Found
+    p You don't have a family yet. Create one to start building your tree.
+
+    = link_to "Create Your First Family",
+        new_family_path,
+        class: "btn-create-first-family",
+        data: { turbo_frame: "modal" }

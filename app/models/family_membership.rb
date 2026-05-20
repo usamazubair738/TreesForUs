@@ -20,18 +20,20 @@
 #  user_id    (user_id => users.id)
 #
 class FamilyMembership < ApplicationRecord
+
   belongs_to :user
   belongs_to :family
- enum :membership_type, {
-  birth: 0,
-  marriage: 1
-}
-  validates :user_id, uniqueness: {
-    scope: :family_id
-  }
 
-  validates :membership_type, uniqueness: {
-    scope: :user_id,
-    message: "family already assigned"
+  enum :membership_type, {
+    birth: 0,
+    marriage: 1
   }
+  validates :user_id,
+            uniqueness: {
+              scope: :family_id,
+              message: "is already associated with this family"
+            }
+
+  validates :membership_type,
+            presence: true
 end

@@ -8,7 +8,7 @@
 #  updated_at :datetime         not null
 #
 class Family < ApplicationRecord
-  has_many :family_memberships, dependent: :destroy
+  has_many :family_memberships
   has_many :users, through: :family_memberships
   def self.ransackable_attributes(auth_object = nil)
     %w[id name created_at updated_at]

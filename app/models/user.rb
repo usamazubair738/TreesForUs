@@ -1,35 +1,70 @@
 class User < ApplicationRecord
-  # ---------------------------------------------------
+  # ===================================================
   # DEVISE
-  # ---------------------------------------------------
+  # ===================================================
   devise :database_authenticatable,
          :registerable,
          :recoverable,
          :rememberable,
          :validatable
-
-  # ---------------------------------------------------
+  with_options if: :login_enabled? do
+    validates :email, presence: true
+    validates :password, presence: true
+  end
+  # ===================================================
   # CALLBACKS
-  # ---------------------------------------------------
-  after_create :build_default_profile
+  # ===================================================
+  after_create :create_default_profile, unless: :user_profile_present?
 
-  # ---------------------------------------------------
+  # ===================================================
   # ASSOCIATIONS
-  # ---------------------------------------------------
+  # ===================================================
+
+  # -------------------------
+  # PROFILE
+  # -------------------------
+  has_one :user_profile, dependent: :destroy
+
+  accepts_nested_attributes_for :user_profile,
+                                update_only: true,
+                                allow_destroy: true
+
+  # -------------------------
+  # FAMILY MEMBERSHIPS
+  # -------------------------
+  has_many :family_memberships,
+           dependent: :destroy
+
+  has_many :families,
+           through: :family_memberships
+
+  accepts_nested_attributes_for :family_memberships,
+                                allow_destroy: true
+
+  # -------------------------
+  # PARENT / CHILD RELATIONSHIPS
+  # -------------------------
   has_many :parent_relationships,
            class_name: "UserParentRelationship",
-           foreign_key: :child_id
+           foreign_key: :child_id,
+           dependent: :destroy
 
   has_many :child_relationships,
            class_name: "UserParentRelationship",
-           foreign_key: :parent_id
+           foreign_key: :parent_id,
+           dependent: :destroy
 
-  has_many :parents, through: :parent_relationships
-  has_many :children, through: :child_relationships
+  has_many :parents,
+           through: :parent_relationships,
+           source: :parent
 
-  has_one :user_profile, dependent: :destroy
-  accepts_nested_attributes_for :user_profile
+  has_many :children,
+           through: :child_relationships,
+           source: :child
 
+  # -------------------------
+  # PARTNER RELATIONSHIPS
+  # -------------------------
   has_many :user_partners,
            class_name: "UserPartner",
            foreign_key: :user_id,
@@ -40,15 +75,17 @@ class User < ApplicationRecord
            foreign_key: :partner_id,
            dependent: :destroy
 
-  has_many :partners, through: :user_partners, source: :partner
-  has_many :inverse_partners, through: :inverse_user_partners, source: :user
+  has_many :partners,
+           through: :user_partners,
+           source: :partner
 
-  has_many :family_memberships
-  has_many :families, through: :family_memberships
+  has_many :inverse_partners,
+           through: :inverse_user_partners,
+           source: :user
 
-  # ---------------------------------------------------
+  # ===================================================
   # ENUMS
-  # ---------------------------------------------------
+  # ===================================================
   enum :role, {
     family_manager: 0,
     viewer: 1,
@@ -67,70 +104,76 @@ class User < ApplicationRecord
     birth_certificate: 3
   }
 
-  # ---------------------------------------------------
+  # ===================================================
   # SCOPES
-  # ---------------------------------------------------
+  # ===================================================
   scope :with_login, -> { where(login_enabled: true) }
-  scope :tree_only, -> { where(login_enabled: false) }
+  scope :tree_only,  -> { where(login_enabled: false) }
 
-  # ---------------------------------------------------
+  # ===================================================
   # VIRTUAL ATTRIBUTES
-  # ---------------------------------------------------
+  # ===================================================
   attr_accessor :new_family_name
 
-  # ---------------------------------------------------
+  # ===================================================
   # VALIDATIONS
-  # ---------------------------------------------------
+  # ===================================================
+
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+
+  validates :identification_number,
+            presence: true,
+            uniqueness: {
+              scope: :identification_type
+            }
+
   validate :cannot_have_more_than_two_families
 
-  # ---------------------------------------------------
+  # ===================================================
   # DEVISE OVERRIDES
-  # ---------------------------------------------------
+  # ===================================================
+
+  # Email required only for login-enabled users
   def email_required?
     login_enabled?
   end
 
+  # Password required only for login-enabled users
   def password_required?
-    login_enabled?
+    return false unless login_enabled?
+
+    new_record? || password.present? || password_confirmation.present?
   end
 
-  # ---------------------------------------------------
+  # ===================================================
   # BUSINESS RULES
-  # ---------------------------------------------------
+  # ===================================================
   def cannot_have_more_than_two_families
     return if families.size <= 2
 
     errors.add(:families, "cannot exceed 2")
   end
 
-  # ---------------------------------------------------
-  # CLASS HELPERS
-  # ---------------------------------------------------
-  def self.status_options
-    statuses.keys.map { |s| [s.humanize, s] }
-  end
-
-  # ---------------------------------------------------
-  # RANSACK ATTRIBUTES (what can be searched)
-  # ---------------------------------------------------
+  # ===================================================
+  # RANSACK
+  # ===================================================
   def self.ransackable_attributes(auth_object = nil)
     %w[
       id
-      email
       first_name
       last_name
+      email
       role
       status
       identification_type
       identification_number
+      login_enabled
       created_at
       updated_at
     ]
   end
 
-  # ---------------------------------------------------
-  # RANSACK ASSOCIATIONS (what can be joined in filters)
-  # ---------------------------------------------------
   def self.ransackable_associations(auth_object = nil)
     %w[
       user_profile
@@ -143,31 +186,53 @@ class User < ApplicationRecord
     ]
   end
 
-  # ---------------------------------------------------
+  # ===================================================
+  # CLASS HELPERS
+  # ===================================================
+  def self.status_options
+    statuses.keys.map { |status| [status.humanize, status] }
+  end
+
+  # ===================================================
   # INSTANCE HELPERS
-  # ---------------------------------------------------
+  # ===================================================
   def full_name
-    "#{first_name} #{last_name}"
+    [first_name, last_name].compact.join(" ")
   end
 
   def initials
-    "#{first_name[0]}#{last_name[0]}".upcase
+    "#{first_name.to_s.first}#{last_name.to_s.first}".upcase
   end
 
   def age
-    return "-" unless respond_to?(:birth_date) && birth_date.present?
-    ((Date.today - birth_date) / 365.25).floor
+    return "-" unless user_profile&.birth_date.present?
+
+    ((Date.current - user_profile.birth_date) / 365.25).floor
   end
 
   def all_partners
-    partners + inverse_partners
+    (partners + inverse_partners).uniq
   end
 
-  # ---------------------------------------------------
-  # DEFAULT PROFILE CREATION
-  # ---------------------------------------------------
-  def build_default_profile
-    create_user_profile(
+  def login_user?
+    login_enabled?
+  end
+
+  def tree_member?
+    !login_enabled?
+  end
+
+  # ===================================================
+  # PRIVATE METHODS
+  # ===================================================
+  private
+
+  def user_profile_present?
+    user_profile.present?
+  end
+
+  def create_default_profile
+    create_user_profile!(
       birth_date: nil,
       gender: nil,
       marital_status: nil,
