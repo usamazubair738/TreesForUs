@@ -1,9 +1,14 @@
+/ app/views/families/new.html.slim
+
 - content_for :title, "New Family"
 
-.body class="md:w-2/3 w-full"
-    h1.font-bold.text-4xl New Family
+.max-w-3xl.mx-auto.px-4.py-8
+
+  .bg-white.rounded-2xl.shadow-md.border.border-gray-100.p-8
+
+    .mb-8
+      h1.text-3xl.font-bold.text-green-900 New Family
+      p.text-gray-500.mt-2
+        Create a new family tree and start adding relationships.
 
     = render "form", family: @family
-
-    = link_to "Back to families", families_path,
-        class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium"

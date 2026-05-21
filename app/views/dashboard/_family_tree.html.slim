@@ -5,8 +5,6 @@
 .dashboard-family-bar
 
   .family-bar-left
-
-
   .family-bar-right
 
     - if current_user.families.any?
@@ -17,7 +15,12 @@
           span.badge-name = current_user.families.first.name
 
       - else
-        = form_with url: dashboard_index_path, method: :get, local: true, class: "family-switcher-form", data: { turbo: "false" } do
+        = form_with url: dashboard_index_path,
+          method: :get,
+          local: true,
+          class: "family-switcher-form",
+          data: { turbo: "false" } do
+
           = select_tag :family_id,
             options_from_collection_for_select(current_user.families, :id, :name, @active_family&.id),
             onchange: "this.form.submit()",

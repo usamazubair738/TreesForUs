@@ -72,7 +72,7 @@ def create
       else
 
         format.html do
-          redirect_to @family,
+          redirect_to dashboard_index_path,
           notice: "Family was successfully created."
         end
 
