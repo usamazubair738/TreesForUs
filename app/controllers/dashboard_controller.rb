@@ -6,14 +6,17 @@ class DashboardController < ApplicationController
     @user_profile = @user.user_profile
 
     @active_family = resolve_active_family
-
     return unless @active_family.present?
 
     preload_family_relationships
 
-    @root_member = find_root_member_in_family(@active_family)
+    @family_user_ids = @preloaded_users.map(&:id)
 
-    @family_tree = @root_member.present? ? build_family_tree(@root_member) : nil
+    @root_member =
+      find_root_member_in_family(@active_family)
+
+    @family_tree =
+      @root_member.present? ? build_family_tree(@root_member) : nil
   end
 
   private
@@ -26,7 +29,8 @@ class DashboardController < ApplicationController
         current_user.family_ids.first
       end
 
-    current_user.families.find_by(id: family_id) || current_user.families.first
+    current_user.families.find_by(id: family_id) ||
+      current_user.families.first
   end
 
   def preload_family_relationships
@@ -47,7 +51,7 @@ class DashboardController < ApplicationController
   def find_root_member_in_family(family)
     return nil unless family
 
-    family_user_ids = family.users.pluck(:id)
+    family_user_ids = @family_user_ids
 
     user = current_user
     return nil unless family_user_ids.include?(user.id)
@@ -71,6 +75,7 @@ class DashboardController < ApplicationController
 
     current
   end
+
   def build_family_tree(user, visited = Set.new)
     return nil if user.nil?
     return nil if visited.include?(user.id)
@@ -89,6 +94,7 @@ class DashboardController < ApplicationController
     }
   end
 
+
   def partner_ids_for(user)
     ids = UserPartner
       .where("user_id = ? OR partner_id = ?", user.id, user.id)
@@ -97,9 +103,11 @@ class DashboardController < ApplicationController
       .uniq
       .reject { |id| id == user.id }
 
-    ids.any? ? User.includes(:user_profile).where(id: ids) : []
+    User
+      .includes(:user_profile)
+      .where(id: ids)
+      .where(id: @family_user_ids)
   end
-
 
 
   def children_of(user, partners)
@@ -107,7 +115,10 @@ class DashboardController < ApplicationController
 
     User
       .joins(:parent_relationships)
-      .where(user_parent_child_relationships: { parent_id: parent_ids })
+      .where(user_parent_child_relationships: {
+        parent_id: parent_ids
+      })
+      .where(id: @family_user_ids)
       .distinct
   end
 end

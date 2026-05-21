@@ -1,0 +1,42 @@
+= form_with model: family, local: true, class: "mt-6 space-y-6" do |f|
+
+  / =====================================================
+  / ERROR MESSAGES
+  / =====================================================
+
+  - if family.errors.any?
+    .rounded-xl.border.border-red-200.bg-red-50.p-5
+
+      .flex.items-center.gap-2.mb-3
+        span.text-red-600.font-semibold.text-sm
+          = "#{family.errors.count} error(s) prevented this family from being saved:"
+
+      ul.list-disc.list-inside.space-y-1
+        - family.errors.full_messages.each do |msg|
+          li.text-sm.text-red-700 = msg
+
+  / =====================================================
+  / FAMILY NAME
+  / =====================================================
+
+  .field
+    = f.label :name,
+      "Family Name",
+      class: "block font-medium text-gray-700 mb-1"
+
+    = f.text_field :name,
+      placeholder: "e.g. The Smith Family",
+      class: "block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+
+  / =====================================================
+  / ACTIONS
+  / =====================================================
+
+  .flex.items-center.gap-3
+
+    = f.submit family.persisted? ? "Update Family" : "Create Family",
+      class: "rounded-md px-4 py-2.5 bg-indigo-600 text-white font-medium hover:bg-indigo-500 cursor-pointer"
+
+    = link_to "Cancel",
+      families_path,
+      class: "rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium"
