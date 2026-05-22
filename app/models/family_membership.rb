@@ -28,6 +28,13 @@ class FamilyMembership < ApplicationRecord
     birth: 0,
     marriage: 1
   }
+
+
+  def self.family_memberships_type_options
+    membership_types.keys.map do |membership|
+    [membership.humanize, membership]
+    end
+  end
   validates :user_id,
             uniqueness: {
               scope: :family_id,

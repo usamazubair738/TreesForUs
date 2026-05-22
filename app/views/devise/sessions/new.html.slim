@@ -3,7 +3,8 @@ html
   head
     = csrf_meta_tags
     = csp_meta_tag
-  body.bg-gray-100.min-h-screen.flex.items-center.justify-center
+
+  body.bg-gray-100.min-h-screen.flex.items-center.justify-center.login-bg
     .container
       .mx-auto.bg-white.rounded-2xl.shadow-xl.overflow-hidden
         - if flash[:notice]

@@ -36,7 +36,7 @@
   .flex.items-center.gap-3.pt-4
 
     = f.submit family.persisted? ? "Update Family" : "Create Family",
-      class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
+      class: "primary-btn text-white px-4 py-2 rounded-lg transition"
 
     = link_to "Cancel",
       families_path,

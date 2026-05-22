@@ -29,6 +29,18 @@ class UserProfile < ApplicationRecord
   has_one_attached :avatar
   belongs_to :user
 
+
+  enum :marital_status, {
+    single: "single",
+    married: "married",
+    divorced: "divorced",
+    widowed: "widowed"
+  }
+
+    def self.marital_status_options
+    marital_statuses.keys.map { |status| [status.humanize, status] }
+  end
+
   def self.ransackable_attributes(auth_object = nil)
   [
     "id",

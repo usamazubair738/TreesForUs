@@ -1,39 +1,49 @@
+
 /* ============================================================
-   FAMILY TREE — COMPLETE STYLES
+   FAMILY TREE — PREMIUM BOTANICAL THEME
    ============================================================ */
 
 :root {
   --card-w: 150px;
-  --card-radius: 14px;
+  --card-radius: 22px;
 
-  --wire: #cfc6bb;
+  --wire: rgb(201, 189, 170);
   --wire-px: 2px;
 
   --stem-h: 42px;
   --arm-h: 28px;
   --col-gap: 42px;
 
-  --bg: #f6f4f1;
+  --bg: rgb(244, 241, 234);
 
-  --card-bg: #ffffff;
-  --card-border: #e7e0d7;
+  --card-bg: rgb(255, 255, 255);
+  --card-border: rgb(229, 221, 208);
 
-  --card-shadow: 0 2px 10px rgba(0,0,0,.05);
-  --card-hover: 0 8px 24px rgba(0,0,0,.12);
+  --card-shadow:
+    0 4px 14px rgba(0,0,0,.04),
+    0 1px 3px rgba(0,0,0,.03);
 
-  --root-bg: #1d1c30;
-  --root-text: #ffffff;
-  --root-sub: #9fa8da;
+  --card-hover:
+    0 12px 32px rgba(0,0,0,.08);
 
-  --partner-bg: #eef2ff;
-  --partner-bdr: #ccd6ff;
+  /* CHILDREN + ROOT */
+  --root-bg: rgb(62, 107, 87);
+  --root-text: rgb(255,255,255);
+  --root-sub: rgba(255,255,255,.72);
 
-  --avatar-bg: #e4ddd4;
-  --avatar-size: 46px;
+  /* PARTNER */
+  --partner-bg: rgb(255,255,255);
+  --partner-bdr: rgb(229, 221, 208);
 
-  --text-name: #181716;
-  --text-role: #6f6a64;
-  --text-age: #9d978f;
+  --avatar-bg: rgba(255,255,255,.88);
+  --avatar-size: 50px;
+
+  --text-name: rgb(28, 28, 28);
+  --text-role: rgb(107, 114, 128);
+  --text-age: rgb(156, 163, 175);
+
+  --accent: rgb(184, 155, 94);
+  --dark-green: rgb(29, 77, 58);
 }
 
 /* ============================================================
@@ -43,15 +53,33 @@
 body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgb(248, 246, 241) 0%,
+      rgb(244, 241, 234) 100%
+    );
+
   font-family:
+    "Plus Jakarta Sans",
     Inter,
     ui-sans-serif,
     system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
     sans-serif;
+
+  color: var(--text-name);
+}
+
+/* ============================================================
+   BACKGROUND IMAGE
+   ============================================================ */
+
+.login-bg {
+  background-image: url("/assets/background-img.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* ============================================================
@@ -98,8 +126,6 @@ body {
   z-index: 0;
 }
 
-/* SVG PATHS */
-
 #tree-connectors path,
 #tree-connectors line {
   stroke: var(--wire);
@@ -110,7 +136,7 @@ body {
 }
 
 /* ============================================================
-   LAYERING
+   TREE STRUCTURE
    ============================================================ */
 
 .tree-node,
@@ -122,19 +148,11 @@ body {
   z-index: 1;
 }
 
-/* ============================================================
-   TREE NODE
-   ============================================================ */
-
 .tree-node {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
-/* ============================================================
-   COUPLE ROW
-   ============================================================ */
 
 .couple-row {
   display: flex;
@@ -154,21 +172,21 @@ body {
 }
 
 .couple-line {
-  width: 22px;
+  width: 24px;
   height: 2px;
   background: var(--wire);
 }
 
 .couple-heart {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1;
-  color: #c27a81;
-  padding: 0 4px;
+  color: var(--accent);
+  padding: 0 5px;
   user-select: none;
 }
 
 /* ============================================================
-   CARD WRAPPER  (hover trigger for dynamic buttons)
+   CARD WRAPPER
    ============================================================ */
 
 .card-wrapper {
@@ -176,9 +194,9 @@ body {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  /* extra breathing room so absolutely-positioned buttons don't clip */
+
   padding: 0 48px 44px;
-  margin: 0 -48px -44px; /* cancel the padding from surrounding layout */
+  margin: 0 -48px -44px;
 }
 
 /* ============================================================
@@ -188,56 +206,71 @@ body {
 .card {
   width: var(--card-w);
 
-  background: var(--card-bg);
+  background: rgba(255,255,255,.92);
+
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
 
   box-shadow: var(--card-shadow);
 
-  padding: 14px 10px 12px;
+  backdrop-filter: blur(12px);
+
+  padding: 18px 12px 14px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 
   position: relative;
-  overflow: visible;
+  overflow: hidden;
 
   transition:
-    transform .18s ease,
-    box-shadow .18s ease,
-    border-color .18s ease;
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease;
 
   flex-shrink: 0;
 }
 
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
+
   box-shadow: var(--card-hover);
 }
 
 /* ============================================================
-   ROOT CARD
+   ROOT + CHILDREN CARDS
    ============================================================ */
 
-.card.root {
-  background: var(--root-bg);
-  border-color: rgb(22 163 74);
+.card.root,
+.card.child-card {
+  background:
+    linear-gradient(
+      145deg,
+      rgb(74, 118, 98),
+      rgb(62, 107, 87)
+    );
+
+  border: 1px solid rgba(255,255,255,.12);
 }
 
-.card.root .card-name {
+.card.root .card-name,
+.card.child-card .card-name {
   color: var(--root-text);
 }
 
 .card.root .card-role,
-.card.root .card-age {
+.card.root .card-age,
+.card.child-card .card-role,
+.card.child-card .card-age {
   color: var(--root-sub);
 }
 
-.card.root .avatar-initials {
-  background: #ffffff;
-  color: #d7ddff;
+.card.root .avatar-initials,
+.card.child-card .avatar-initials {
+  background: rgba(255,255,255,.92);
+  color: var(--dark-green);
 }
 
 /* ============================================================
@@ -245,8 +278,9 @@ body {
    ============================================================ */
 
 .card.partner-card {
-  background: var(--partner-bg);
-  border-color: var(--partner-bdr);
+  background: rgba(255,255,255,.95);
+
+  border: 1px solid var(--partner-bdr);
 }
 
 /* ============================================================
@@ -261,6 +295,11 @@ body {
   overflow: hidden;
 
   flex-shrink: 0;
+
+  border: 3px solid rgba(255,255,255,.8);
+
+  box-shadow:
+    0 4px 10px rgba(0,0,0,.08);
 }
 
 .avatar-img {
@@ -296,9 +335,11 @@ body {
 .card-name {
   max-width: 100%;
 
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.25;
+
+  letter-spacing: -0.02em;
 
   color: var(--text-name);
 
@@ -310,7 +351,7 @@ body {
 }
 
 .card-role {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--text-role);
   text-align: center;
@@ -328,17 +369,17 @@ body {
 .tooltip {
   position: absolute;
 
-  bottom: calc(100% + 10px);
+  bottom: calc(100% + 12px);
   left: 50%;
 
   transform: translateX(-50%);
 
-  background: #1d1c30;
+  background: rgba(29,77,58,.96);
   color: white;
 
-  padding: 10px 12px;
+  padding: 10px 14px;
 
-  border-radius: 10px;
+  border-radius: 12px;
 
   font-size: 11px;
   line-height: 1.45;
@@ -349,14 +390,15 @@ body {
   visibility: hidden;
 
   transition:
-    opacity .16s ease,
-    transform .16s ease;
+    opacity .18s ease,
+    transform .18s ease;
 
   pointer-events: none;
 
   z-index: 1000;
 
-  box-shadow: 0 8px 28px rgba(0,0,0,.18);
+  box-shadow:
+    0 12px 28px rgba(0,0,0,.16);
 }
 
 .tooltip::after {
@@ -370,13 +412,7 @@ body {
   transform: translateX(-50%);
 
   border: 5px solid transparent;
-  border-top-color: #1d1c30;
-}
-
-.tooltip strong {
-  display: block;
-  margin-bottom: 2px;
-  font-size: 12px;
+  border-top-color: rgba(29,77,58,.96);
 }
 
 .card:hover .tooltip {
@@ -386,7 +422,7 @@ body {
 }
 
 /* ============================================================
-   ADD BUTTONS — base
+   ADD BUTTONS
    ============================================================ */
 
 .btn-add {
@@ -394,51 +430,45 @@ body {
   align-items: center;
   gap: 4px;
 
-  padding: 4px 9px;
+  padding: 6px 10px;
 
-  background: var(--card-bg);
-  border: 1.5px dashed var(--wire);
-  border-radius: 20px;
+  background: rgba(255,255,255,.94);
 
-  color: var(--text-role);
+  border: 1px solid rgba(201,189,170,.6);
+
+  border-radius: 999px;
+
+  color: var(--dark-green);
+
   font-size: 10px;
   font-weight: 600;
   font-family: inherit;
 
   text-decoration: none;
   white-space: nowrap;
+
   cursor: pointer;
 
-  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.05);
 
-  transition:
-    background .15s ease,
-    border-color .15s ease,
-    color .15s ease,
-    box-shadow .15s ease;
+  transition: all .18s ease;
 }
 
 .btn-add:hover {
-  background: #f0edff;
-  border-color: var(--partner-bdr);
-  color: #3d3d8f;
-  box-shadow: 0 4px 10px rgba(0,0,0,.1);
+  background: rgb(248,246,241);
+
+  border-color: var(--accent);
+
+  color: var(--dark-green);
+
+  transform: translateY(-1px);
 }
 
 .btn-add__icon {
   font-size: 13px;
-  font-weight: 400;
-  line-height: 1;
-  color: var(--text-age);
-}
-
-.btn-add__label {
   line-height: 1;
 }
-
-/* ============================================================
-   ADD BUTTONS — dynamic (hidden until card-wrapper hovered)
-   ============================================================ */
 
 .btn-add--dynamic {
   position: absolute;
@@ -452,22 +482,24 @@ body {
   z-index: 10;
 }
 
-/* Spouse: horizontally right of the card, vertically centred */
 .btn-add--spouse {
   top: 50%;
-  /* sits just past the card edge; the -48px padding on .card-wrapper gives space */
   right: 0;
-  transform: translateY(calc(-50% - 22px)) scale(0.85);
+
+  transform:
+    translateY(calc(-50% - 22px))
+    scale(0.85);
 }
 
-/* Child: horizontally centred, below the card */
 .btn-add--child {
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%) scale(0.85);
+
+  transform:
+    translateX(-50%)
+    scale(0.85);
 }
 
-/* Reveal on hover or keyboard focus */
 .card-wrapper:hover .btn-add--dynamic,
 .card-wrapper:focus-within .btn-add--dynamic {
   opacity: 1;
@@ -476,12 +508,16 @@ body {
 
 .card-wrapper:hover .btn-add--spouse,
 .card-wrapper:focus-within .btn-add--spouse {
-  transform: translateY(calc(-50% - 22px)) scale(1);
+  transform:
+    translateY(calc(-50% - 22px))
+    scale(1);
 }
 
 .card-wrapper:hover .btn-add--child,
 .card-wrapper:focus-within .btn-add--child {
-  transform: translateX(-50%) scale(1);
+  transform:
+    translateX(-50%)
+    scale(1);
 }
 
 /* ============================================================
@@ -496,10 +532,6 @@ body {
   padding-top: var(--stem-h);
 }
 
-/* ============================================================
-   CHILDREN ROW
-   ============================================================ */
-
 .children-row {
   display: flex;
   align-items: flex-start;
@@ -509,10 +541,6 @@ body {
 
   position: relative;
 }
-
-/* ============================================================
-   CHILD COLUMN
-   ============================================================ */
 
 .child-column {
   display: flex;
@@ -527,7 +555,7 @@ body {
 }
 
 /* ============================================================
-   PURE CSS CONNECTORS (Fallback if JS missing)
+   CSS CONNECTORS
    ============================================================ */
 
 .child-column::before {
@@ -559,6 +587,8 @@ body {
 
   background: var(--wire);
 }
+
+
 
 /* ============================================================
    RESPONSIVE
@@ -694,7 +724,7 @@ body {
   padding: 12px 16px;
   border-radius: 12px;
   border: 1px solid #d1d5db;
-  background: white;
+  background: #1D4D3A;
 }
 
 .btn-create-family,
@@ -763,7 +793,7 @@ body {
   max-width: 260px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: #0f9f44;
+  background: #1D4D3A;
   color: #f0edff; 
   border: 1px solid #bbf7d0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -780,9 +810,26 @@ body {
 .family-select:hover {
   border-color: #86efac;
 }
-
 .login-bg {
-  background-image: url("/assets/backdrop.avif");
+  min-height: 100vh;
+  width: 100%;
+  background-image: url("/assets/background-img.png");
   background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 
+  overflow-x: hidden;
+}
+
+.primary-btn 
+  {
+    background-color: #1D4D3A;
+    border-color: #1D4D3A;
+    color: #fff;  
+  }
+.primary-btn:hover {
+  background-color: #16392b;
+  border-color: #1D4D3A;
+  color: #fff;  
 }

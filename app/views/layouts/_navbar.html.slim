@@ -17,7 +17,7 @@ nav.bg-white.shadow-md.px-6.py-4.flex.items-center.justify-between
 
     = link_to "Add Relationships",
       new_relationship_path,
-      class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
+      class: "primary-btn hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
 
     = link_to user_profile_path(current_user), class: "flex items-center" do
       - profile = current_user.user_profile

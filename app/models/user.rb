@@ -1,12 +1,12 @@
 class User < ApplicationRecord
   # ===================================================
   # DEVISE
-  # ===================================================
-  devise :database_authenticatable,
-         :registerable,
-         :recoverable,
-         :rememberable,
-         :validatable
+ devise :database_authenticatable,
+       :registerable,
+       :recoverable,
+       :rememberable,
+       :validatable,
+       :confirmable
   with_options if: :login_enabled? do
     validates :email, presence: true
     validates :password, presence: true
@@ -129,7 +129,37 @@ class User < ApplicationRecord
             }
 
   validate :cannot_have_more_than_two_families
+  # validate :identification_number_format
 
+   def identification_number_format
+    return if identification_type.blank? || identification_number.blank?
+
+    case identification_type
+    when "nric"
+      # Example: Malaysian NRIC format (simplified)
+      unless identification_number.match?(/\A\d{6}-\d{2}-\d{4}\z/)
+        errors.add(:identification_number, "must be in NRIC format XXXXXX-XX-XXXX")
+      end
+
+    when "passport"
+      # Common passport pattern (alphanumeric, 6–9 chars)
+      unless identification_number.match?(/\A[A-Z0-9]{6,9}\z/i)
+        errors.add(:identification_number, "must be a valid passport number")
+      end
+
+    when "driving_license"
+      # Example: alphanumeric, 5–15 chars
+      unless identification_number.match?(/\A[A-Z0-9\-]{5,15}\z/i)
+        errors.add(:identification_number, "must be a valid driving license number")
+      end
+
+    when "birth_certificate"
+      # Example: digits only (adjust if your country differs)
+      unless identification_number.match?(/\A\d{6,20}\z/)
+        errors.add(:identification_number, "must be a valid birth certificate number")
+      end
+    end
+  end
   # ===================================================
   # DEVISE OVERRIDES
   # ===================================================
@@ -192,7 +222,11 @@ class User < ApplicationRecord
   def self.status_options
     statuses.keys.map { |status| [status.humanize, status] }
   end
-
+  def self.identification_type_options
+    identification_types.keys.map do |type|
+    [type.humanize, type]
+    end 
+  end
   # ===================================================
   # INSTANCE HELPERS
   # ===================================================

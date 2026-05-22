@@ -4,7 +4,7 @@ html
     = csrf_meta_tags
     = csp_meta_tag
 
-  body.bg-gray-100.min-h-screen.flex.items-center.justify-center
+  body.bg-gray-100.min-h-screen.flex.items-center.justify-center.login-bg
 
     .w-full.max-w-md.bg-white.rounded-2xl.shadow-xl.p-10
 
@@ -30,10 +30,6 @@ html
           | Visualize your family. Explore your roots.
           br
           | Build your legacy for generations.
-
-      - identification_options = [["Passport", "passport"], ["Driver's License", "drivers_license"], ["National ID", "national_id"]]
-      - membership_options = [["Birth Family", "birth"], ["Marriage Family", "marriage"]]
-      - marital_status_options = [["Single", "single"], ["Married", "married"], ["Divorced", "divorced"], ["Widowed", "widowed"]]
 
       = form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
 
@@ -75,14 +71,14 @@ html
               class: "w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
 
             = p.select :marital_status,
-              options_for_select(marital_status_options),
+              options_for_select(UserProfile.marital_status_options),
               { prompt: "Select Marital Status" },
               class: "w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
 
           / IDENTIFICATION
 
           = f.select :identification_type,
-            options_for_select(identification_options, resource.identification_type),
+            options_for_select(User.identification_type_options),
             { prompt: "Select Identification Type" },
             class: "w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
 
@@ -110,7 +106,7 @@ html
             id: "new_family_input"
 
           = select_tag :membership_type,
-            options_for_select([["Birth Family", "birth"], ["Marriage Family", "marriage"]]),
+            options_for_select(FamilyMembership.family_memberships_type_options),
             prompt: "Select Membership Type",
             class: "w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500",
             required: true
