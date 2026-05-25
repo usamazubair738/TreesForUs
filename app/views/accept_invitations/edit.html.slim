@@ -1,0 +1,96 @@
+/ app/views/accept_invitations/edit.html.slim
+
+doctype html
+html
+  head
+    meta charset="utf-8"
+    meta name="viewport" content="width=device-width, initial-scale=1.0"
+    title Activate your TreeOfUs account
+    link rel="preconnect" href="https://fonts.googleapis.com"
+    link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=DM+Sans:wght@400;500&display=swap"
+
+  body style="margin:0; padding:0; background-color:#f0ebe3; font-family:'DM Sans', sans-serif;"
+
+    / Card
+    div style="max-width:500px; margin:40px auto 40px; background:#fffdf9; border-radius:16px; overflow:hidden; border:0.5px solid #e6dfd4;"
+
+      / Header
+      div style="background:#2d3a2e; padding:28px 32px 24px; position:relative;"
+        div style="font-family:'Lora', serif; font-size:13px; font-weight:600; color:#a3c4a0; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:4px;"
+          | TreeOfUs
+        div style="font-size:11px; color:#6a8a67; letter-spacing:0.04em;"
+          | Your family story, connected
+        div style="position:absolute; right:24px; top:50%; transform:translateY(-50%); opacity:0.18; font-size:64px; line-height:1; color:#fff;"
+          | 🌿
+
+      / Body
+      div style="padding:32px 32px 28px;"
+
+        h2 style="font-family:'Lora', serif; font-size:22px; font-weight:600; color:#2d3a2e; margin:0 0 16px; line-height:1.3;"
+          | Hi, #{@invitee.first_name} 👋
+
+        / Divider
+        div style="width:36px; height:2px; background:#a3c4a0; margin-bottom:18px; border-radius:2px;"
+
+        p style="font-size:14.5px; line-height:1.75; color:#4a4a3f; margin:0 0 28px;"
+          | Set your email and password below to activate your
+          strong style="color:#2d3a2e; font-weight:500;"
+            |  TreeOfUs
+          |  account and access your family tree.
+
+        / Errors
+        - if @invitee.errors.any?
+          div style="background:#fef2f2; border:0.5px solid #fca5a5; border-radius:8px; padding:12px 16px; margin-bottom:20px;"
+            - @invitee.errors.full_messages.each do |msg|
+              p style="font-size:13px; color:#b91c1c; margin:0 0 4px; line-height:1.5;"
+                | #{msg}
+
+        / Form
+        = form_with url: update_invitation_path(token: params[:token]),
+                    model: @invitee,
+                    method: :patch do |f|
+
+          / Email
+          div style="margin-bottom:18px;"
+            = f.label :email, "Your Email",
+                style: "display:block; font-size:12px; font-weight:500; color:#2d3a2e; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:6px;"
+            = f.email_field :email,
+                value: @invitee.email,
+                placeholder: "you@example.com",
+                required: true,
+                style: "width:100%; box-sizing:border-box; padding:11px 14px; font-size:14px; font-family:'DM Sans', sans-serif; color:#2d3a2e; background:#fff; border:0.5px solid #c8dcc6; border-radius:8px; outline:none;"
+
+          / Password
+          div style="margin-bottom:18px;"
+            = f.label :password, "Choose a Password",
+                style: "display:block; font-size:12px; font-weight:500; color:#2d3a2e; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:6px;"
+            = f.password_field :password,
+                placeholder: "Min 8 characters",
+                required: true,
+                style: "width:100%; box-sizing:border-box; padding:11px 14px; font-size:14px; font-family:'DM Sans', sans-serif; color:#2d3a2e; background:#fff; border:0.5px solid #c8dcc6; border-radius:8px; outline:none;"
+
+          / Confirm Password
+          div style="margin-bottom:28px;"
+            = f.label :password_confirmation, "Confirm Password",
+                style: "display:block; font-size:12px; font-weight:500; color:#2d3a2e; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:6px;"
+            = f.password_field :password_confirmation,
+                placeholder: "Repeat password",
+                required: true,
+                style: "width:100%; box-sizing:border-box; padding:11px 14px; font-size:14px; font-family:'DM Sans', sans-serif; color:#2d3a2e; background:#fff; border:0.5px solid #c8dcc6; border-radius:8px; outline:none;"
+
+          / Submit
+          = f.submit "Activate my account →",
+              style: "width:100%; padding:13px 30px; background:#2d3a2e; color:#e8f5e6; font-family:'DM Sans', sans-serif; font-size:14px; font-weight:500; letter-spacing:0.03em; border-radius:8px; border:none; cursor:pointer;"
+
+        / Rule
+        div style="height:0.5px; background:#e6dfd4; margin-top:28px; margin-bottom:18px;"
+
+        p style="font-size:11.5px; color:#b0a898; line-height:1.65; margin:0;"
+          | This link expires in 7 days. If you didn't expect this invitation, you can safely ignore this page.
+
+      / Bottom bar
+      div style="background:#f7f2eb; border-top:0.5px solid #e6dfd4; padding:14px 32px; display:flex; align-items:center; justify-content:space-between;"
+        span style="font-family:'Lora', serif; font-size:12px; color:#8a9e87; font-weight:600;"
+          | TreeOfUs
+        span style="font-size:11px; color:#b0a898;"
+          | Privacy

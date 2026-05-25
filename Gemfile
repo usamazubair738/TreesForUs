@@ -76,4 +76,6 @@ gem "annotaterb"
 gem "activeadmin"
 gem "sassc-rails"
 gem "sprockets-rails"
+gem 'mailjet'
+gem "public_activity"
 gem 'dotenv-rails', groups: [:development, :test]

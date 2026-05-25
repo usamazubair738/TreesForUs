@@ -43,6 +43,7 @@ class UserPartnersController < ApplicationController
     if user_partner_params[:partner_id].present?
       return [User.find(user_partner_params[:partner_id]), nil]
     end
+
     p_attrs       = safe_partner_params
     login_enabled = raw_login_enabled
 
@@ -69,13 +70,21 @@ class UserPartnersController < ApplicationController
     end
 
     partner = User.new(user_attrs)
-
+    Rails.logger.debug "=== partner attributes before save ==="
+    Rails.logger.debug user_attrs.inspect
+    Rails.logger.debug "=== partner valid? #{partner.valid?} ==="
+    Rails.logger.debug "=== partner errors: #{partner.errors.full_messages} ==="
     partner.save!
-    profile_attrs = safe_partner_profile_params.to_h
-    raw_avatar = profile_attrs.delete("avatar")
-    avatar     = raw_avatar.is_a?(ActionDispatch::Http::UploadedFile) ? raw_avatar : nil
+    partner.save!
 
-    partner.user_profile.update!(profile_attrs) if profile_attrs.any?
+    profile_attrs = safe_partner_profile_params.to_h
+    raw_avatar    = profile_attrs.delete("avatar")
+    avatar        = raw_avatar.is_a?(ActionDispatch::Http::UploadedFile) ? raw_avatar : nil
+
+    # Ensure profile exists before updating
+    profile = partner.user_profile || partner.create_user_profile!
+    profile.update!(profile_attrs) if profile_attrs.any?
+
     [partner, avatar]
   end
 

@@ -141,6 +141,12 @@ GEM
     erubi (1.13.1)
     et-orbi (1.4.0)
       tzinfo
+    faraday (2.14.2)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
+    faraday-net_http (3.4.3)
+      net-http (~> 0.5)
     ffi (1.17.4-aarch64-linux-gnu)
     ffi (1.17.4-aarch64-linux-musl)
     ffi (1.17.4-arm-linux-gnu)
@@ -220,6 +226,11 @@ GEM
       net-imap
       net-pop
       net-smtp
+    mailjet (1.8.3)
+      activesupport (>= 5.0.0)
+      faraday (~> 2.1)
+      rack (>= 1.4.0)
+      yajl-ruby
     marcel (1.1.0)
     matrix (0.4.3)
     mini_mime (1.1.5)
@@ -227,6 +238,8 @@ GEM
       drb (~> 2.0)
       prism (~> 1.5)
     msgpack (1.8.0)
+    net-http (0.9.1)
+      uri (>= 0.11.1)
     net-imap (0.6.4)
       date
       net-protocol
@@ -275,6 +288,11 @@ GEM
     psych (5.3.1)
       date
       stringio
+    public_activity (3.0.2)
+      actionpack (>= 6.1)
+      activerecord (>= 6.1)
+      i18n (>= 0.5.0)
+      railties (>= 6.1)
     public_suffix (7.0.5)
     puma (8.0.0)
       nio4r (~> 2.0)
@@ -467,6 +485,7 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
+    yajl-ruby (1.4.3)
     zeitwerk (2.7.5)
 
 PLATFORMS
@@ -495,7 +514,9 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   kamal
+  mailjet
   propshaft
+  public_activity
   puma (>= 5.0)
   rails (~> 8.0.5)
   rubocop-rails-omakase

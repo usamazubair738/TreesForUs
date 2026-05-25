@@ -1,4 +1,58 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id                     :integer          not null, primary key
+#  confirmation_sent_at   :datetime
+#  confirmation_token     :string
+#  confirmed_at           :datetime
+#  created_by             :integer
+#  current_sign_in_at     :datetime
+#  current_sign_in_ip     :string
+#  email                  :string
+#  encrypted_password     :string
+#  failed_attempts        :integer          default(0), not null
+#  first_name             :string           not null
+#  identification_number  :string           not null
+#  identification_type    :integer          default("nric"), not null
+#  invitation_accepted_at :datetime
+#  invitation_sent_at     :datetime
+#  invitation_token       :string
+#  last_name              :string           not null
+#  last_sign_in_at        :datetime
+#  last_sign_in_ip        :string
+#  locked_at              :datetime
+#  login_enabled          :boolean          default(FALSE), not null
+#  remember_created_at    :datetime
+#  reset_password_sent_at :datetime
+#  reset_password_token   :string
+#  role                   :integer          default("family_manager"), not null
+#  sign_in_count          :integer          default(0), not null
+#  status                 :integer          default("alive"), not null
+#  unconfirmed_email      :string
+#  unlock_token           :string
+#  updated_by             :integer
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  parent_id              :integer
+#
+# Indexes
+#
+#  index_users_on_confirmation_token    (confirmation_token) UNIQUE
+#  index_users_on_id_type_and_number    (identification_type,identification_number) UNIQUE
+#  index_users_on_parent_id             (parent_id)
+#  index_users_on_reset_password_token  (reset_password_token) UNIQUE
+#  index_users_on_unlock_token          (unlock_token) UNIQUE
+#
 class User < ApplicationRecord
+  # ===================================================
+  # Activity feed
+
+  include PublicActivity::Model
+
+
+  has_many :activities, class_name: "PublicActivity::Activity", as: :owner, validate: false
+  has_many :received_activities, class_name: "PublicActivity::Activity", as: :trackable, validate: false
   # ===================================================
   # DEVISE
  devise :database_authenticatable,
@@ -25,13 +79,12 @@ class User < ApplicationRecord
   # -------------------------
   has_one :user_profile, dependent: :destroy
 
-  accepts_nested_attributes_for :user_profile,
-                                update_only: true,
-                                allow_destroy: true
+  accepts_nested_attributes_for :user_profile, allow_destroy: true
 
   # -------------------------
   # FAMILY MEMBERSHIPS
   # -------------------------
+
   has_many :family_memberships,
            dependent: :destroy
 
@@ -255,6 +308,39 @@ class User < ApplicationRecord
   def tree_member?
     !login_enabled?
   end
+
+
+# ===================================================
+# INVITATION
+# ===================================================
+def invite!(invited_by:)
+  raw_token               = SecureRandom.urlsafe_base64(32)
+  self.invitation_token   = Digest::SHA256.hexdigest(raw_token)
+  self.invitation_sent_at = Time.current
+  save!(validate: false)
+  raw_token
+end
+
+def self.find_by_invitation_token(raw_token)
+  hashed = Digest::SHA256.hexdigest(raw_token.to_s)
+  find_by(invitation_token: hashed)
+end
+
+def invitation_token_valid?
+  invitation_sent_at.present? && invitation_sent_at > 7.days.ago
+end
+
+def accept_invitation!(email:, password:, password_confirmation:)
+  self.email                  = email
+  self.password               = password
+  self.password_confirmation  = password_confirmation
+  self.login_enabled          = true
+  self.invitation_token       = nil
+  self.invitation_sent_at     = nil
+  self.invitation_accepted_at = Time.current
+  skip_confirmation!
+  save
+end
 
   # ===================================================
   # PRIVATE METHODS

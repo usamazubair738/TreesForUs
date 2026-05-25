@@ -21,6 +21,9 @@
 #  first_name             :string           not null
 #  identification_number  :string           not null
 #  identification_type    :integer          default("nric"), not null
+#  invitation_accepted_at :datetime
+#  invitation_sent_at     :datetime
+#  invitation_token       :string
 #  last_name              :string           not null
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :string
@@ -29,7 +32,7 @@
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
-#  role                   :integer          default("user"), not null
+#  role                   :integer          default("family_manager"), not null
 #  sign_in_count          :integer          default(0), not null
 #  status                 :integer          default("alive"), not null
 #  unconfirmed_email      :string

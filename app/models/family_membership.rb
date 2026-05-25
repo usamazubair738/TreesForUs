@@ -28,6 +28,8 @@ class FamilyMembership < ApplicationRecord
     birth: 0,
     marriage: 1
   }
+  
+
 
 
   def self.family_memberships_type_options

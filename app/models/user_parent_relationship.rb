@@ -13,6 +13,7 @@
 #  idx_on_parent_id_child_id_94af4b48a2  (parent_id,child_id) UNIQUE
 #
 class UserParentRelationship < ApplicationRecord
+
   self.table_name = "user_parent_child_relationships"
 
   belongs_to :parent, class_name: "User"
