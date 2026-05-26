@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   allow_browser versions: :modern
+  include PublicActivity::StoreController
 
   before_action :set_current_user
 

@@ -1,16 +1,22 @@
 Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
-  resources :families
-  resources :family_memberships
-  get "dashboard/index"
-  resources :user_profiles
-  resources :activities, only: [:index]
 
   devise_for :users, controllers: {
     sessions: "users/sessions",
     registrations: "users/registrations"
   }
+
+  resources :families do
+    resources :family_memberships
+    member do
+      get :activity_feed
+    end
+  end
+
+  resources :activities, only: [:index]
+
+  resources :user_profiles
 
   resources :users do
     resources :user_partners, only: [:new, :create]
@@ -23,6 +29,8 @@ Rails.application.routes.draw do
     get   "accept", to: "accept_invitations#edit",   as: :accept_invitation
     patch "accept", to: "accept_invitations#update", as: :update_invitation
   end
+
+  get "dashboard/index"
 
   authenticated :user do
     root to: "dashboard#index", as: :authenticated_root

@@ -103,6 +103,31 @@ def create
 end
 
 
+def activity_feed
+  @family = Family.find(params[:id])
+  family_user_ids = FamilyMembership.where(family_id: @family.id).pluck(:user_id)
+
+  @activities = PublicActivity::Activity
+    .where(owner_type: 'User', owner_id: family_user_ids)
+    .where.not(trackable_type: 'UserProfile')
+    .order(created_at: :desc)
+
+  if params[:filter].present? && params[:filter] != 'all'
+    @activities = @activities.where("key LIKE ?", "%#{params[:filter]}%")
+  end
+
+  @stats = {
+    total:   @activities.count,
+    created: @activities.where("key LIKE ?", '%create%').count,
+    updated: @activities.where("key LIKE ?", '%update%').count,
+    deleted: @activities.where("key LIKE ?", '%destroy%').count,
+    logins:  @activities.where("key LIKE ?", '%login%').count,
+  }
+
+  @activities = @activities.page(params[:page]).per(20)
+
+  render template: 'activities/index'
+end
   def update
     respond_to do |format|
       if @family.update(family_params)

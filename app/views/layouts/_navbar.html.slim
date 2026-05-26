@@ -6,34 +6,31 @@ nav.bg-white.shadow-md.px-6.py-4.flex.items-center.justify-between
     = image_tag "logo.png", class: "w-8 h-8"
     span.font-bold.text-green-900.text-lg TreesForUs
 
-  .flex.items-center.space-x-6
+  .flex.items-center.space-x-3
     - unless current_page?(dashboard_index_path)
-      = link_to "Dashboard",
-        dashboard_index_path,
-        class: "text-gray-700 hover:text-green-700"
+      = link_to dashboard_index_path, class: "text-sm font-medium text-white primary-btn hover:bg-green-700 px-4 py-2 rounded-lg transition" do
+        | Dashboard
 
-    = link_to "Add Relationships",
-      new_relationship_path,
-      class: "primary-btn hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
+    - unless current_page?(new_relationship_path)
+      = link_to new_relationship_path, class: "text-sm font-medium text-white primary-btn hover:bg-green-700 px-4 py-2 rounded-lg transition" do
+        | Add Relationships
 
-    = link_to activities_path, class: "relative flex items-center gap-1 text-gray-700 hover:text-green-700" do
-      i.ti.ti-activity style="font-size: 18px;"
-      span.text-sm Activity
-      - unread = PublicActivity::Activity.where('created_at > ?', 24.hours.ago).count
-      - if unread > 0
-        span.bg-red-500.text-white.rounded-full.flex.items-center.justify-center style="position:absolute; top:-4px; right:-4px; width:16px; height:16px; font-size:10px; font-weight:700;"
-          = unread > 9 ? "9+" : unread
+    - user_family = current_user.family_memberships.first&.family
+    - if user_family
+      - unless current_page?(activity_feed_family_path(user_family))
+        - family_user_ids = FamilyMembership.where(family_id: user_family.id).pluck(:user_id)
+        - last_read = session[:activities_last_read] ? Time.parse(session[:activities_last_read]) : 24.hours.ago
+        - unread = PublicActivity::Activity.where(owner_type: 'User', owner_id: family_user_ids).where('created_at > ?', last_read).count
+        = link_to activity_feed_family_path(user_family), class: "relative text-sm font-medium text-white primary-btn hover:bg-green-700 px-4 py-2 rounded-lg transition flex items-center gap-1" do
+          i.ti.ti-activity style="font-size: 16px;"
+          | Activity
 
     = link_to user_profile_path(current_user), class: "flex items-center" do
       - profile = current_user.user_profile
       - if profile&.avatar&.attached?
-        = image_tag profile.avatar,
-          class: "w-10 h-10 rounded-full border-2 border-green-700 object-cover"
+        = image_tag profile.avatar, class: "w-10 h-10 rounded-full border-2 border-green-700 object-cover"
       - else
-        = image_tag "logo.png",
-          class: "w-10 h-10 rounded-full border-2 border-gray-300 object-cover"
+        = image_tag "logo.png", class: "w-10 h-10 rounded-full border-2 border-gray-300 object-cover"
 
-    = button_to "Logout",
-      destroy_user_session_path,
-      method: :delete,
-      class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
+    = button_to destroy_user_session_path, method: :delete, class: "text-sm font-medium text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition" do
+      | Logout

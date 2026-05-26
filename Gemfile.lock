@@ -514,6 +514,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   kamal
+  kaminari
   mailjet
   propshaft
   public_activity

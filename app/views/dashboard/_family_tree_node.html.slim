@@ -71,15 +71,7 @@
               span.btn-add__icon ✉
               span.btn-add__label Invite
 
-        / --- DELETE ---
-        - if current_user.family_manager?
-          = link_to user_path(node_user),
-              class: "btn-add btn-add--delete btn-add--dynamic",
-              title: "Remove member",
-              data: { turbo_method: "delete", turbo_confirm: "Remove #{node_user.first_name} #{node_user.last_name} from the tree? This cannot be undone." } do
-
-            span.btn-add__icon ×
-            span.btn-add__label Remove
+ 
 
       - partners.each do |partner|
 
@@ -131,15 +123,6 @@
               span.btn-add__icon ✉
               span.btn-add__label Invite
 
-        / --- DELETE ---
-        - if current_user.family_manager?
-          = link_to user_path(partner),
-              class: "btn-add btn-add--delete btn-add--dynamic",
-              title: "Remove partner",
-              data: { turbo_method: "delete", turbo_confirm: "Remove #{partner.first_name} #{partner.last_name} from the tree? This cannot be undone." } do
-
-            span.btn-add__icon ×
-            span.btn-add__label Remove
 
     - if children.any?
 

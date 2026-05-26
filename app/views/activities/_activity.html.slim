@@ -1,0 +1,16 @@
+.feed-item
+  .avatar-circle class=avatar_class(activity.owner)
+    = initials_for(activity.owner)
+
+  .item-body
+    .item-top
+      .icon-dot class=dot_class(activity.key)
+      span.item-user = activity.owner&.full_name || "Unknown"
+      span.item-action = action_text(activity.key)
+      span.item-target = target_name(activity)
+      span.item-time = time_ago_in_words(activity.created_at) + " ago"
+
+    .item-desc = activity_description(activity)
+
+    span.item-badge class=badge_class(activity.key)
+      = badge_label(activity.key)

@@ -1,6 +1,7 @@
 class UserProfilesController < ApplicationController
   def index
     @user = current_user
+    redirect_to dashboard_index_path
   end
 
   def show

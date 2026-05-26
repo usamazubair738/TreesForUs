@@ -47,12 +47,8 @@
 class User < ApplicationRecord
   # ===================================================
   # Activity feed
-
   include PublicActivity::Model
-
-
-  has_many :activities, class_name: "PublicActivity::Activity", as: :owner, validate: false
-  has_many :received_activities, class_name: "PublicActivity::Activity", as: :trackable, validate: false
+  tracked owner: :itself
   # ===================================================
   # DEVISE
  devise :database_authenticatable,

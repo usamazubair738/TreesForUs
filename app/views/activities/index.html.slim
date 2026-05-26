@@ -1,0 +1,39 @@
+.feed-wrap
+  .feed-header
+    .live-badge
+      i.ti.ti-activity aria-hidden="true"
+      |  Activity Feed
+
+  .stats-row
+    .stat-card
+      .stat-num = @stats[:total]
+      .stat-label Total actions
+    .stat-card
+      .stat-num.green = @stats[:created]
+      .stat-label Created
+    .stat-card
+      .stat-num.amber = @stats[:updated]
+      .stat-label Updated
+    .stat-card
+      .stat-num.red = @stats[:deleted]
+      .stat-label Deleted
+    .stat-card
+      .stat-num.blue = @stats[:logins]
+      .stat-label Logins
+
+  .filter-row
+    - %w[all create update destroy login].each do |f|
+      = link_to activities_path(filter: f), class: "filter-btn #{'active' if (params[:filter] || 'all') == f}" do
+        = f.capitalize
+
+  .feed-list
+    - if @activities.any?
+      - @activities.each do |activity|
+        = render 'activities/activity', activity: activity
+    - else
+      .feed-empty
+        i.ti.ti-mood-empty aria-hidden="true"
+        p No activity found.
+
+  .pagination-row
+    = paginate @activities
