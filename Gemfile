@@ -1,5 +1,5 @@
 source "https://rubygems.org"
-
+gem 'dotenv-rails', groups: [:development, :test]
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.5"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
@@ -79,4 +79,7 @@ gem "sprockets-rails"
 gem 'mailjet'
 gem 'public_activity'
 gem 'kaminari'
-gem 'dotenv-rails', groups: [:development, :test]
+gem "pg"
+
+gem 'omniauth-google-oauth2'
+gem 'omniauth-rails_csrf_protection'

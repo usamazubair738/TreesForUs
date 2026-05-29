@@ -1,10 +1,12 @@
+
 Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
   devise_for :users, controllers: {
     sessions: "users/sessions",
-    registrations: "users/registrations"
+    registrations: "users/registrations",
+    omniauth_callbacks: "users/omniauth_callbacks"
   }
 
   resources :families do
@@ -22,6 +24,9 @@ Rails.application.routes.draw do
     resources :user_partners, only: [:new, :create]
     resources :invitations, only: [:new, :create]
   end
+
+  get  "identification", to: "identification#edit",   as: :edit_identification
+  patch "identification", to: "identification#update", as: :update_identification
 
   resources :relationships, only: [:create, :destroy, :new]
 

@@ -23,12 +23,14 @@
 #  last_sign_in_ip        :string
 #  locked_at              :datetime
 #  login_enabled          :boolean          default(FALSE), not null
+#  provider               :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
 #  role                   :integer          default("family_manager"), not null
 #  sign_in_count          :integer          default(0), not null
 #  status                 :integer          default("alive"), not null
+#  uid                    :string
 #  unconfirmed_email      :string
 #  unlock_token           :string
 #  updated_by             :integer
@@ -61,6 +63,7 @@ class User < ApplicationRecord
     validates :email, presence: true
     validates :password, presence: true
   end
+  devise :omniauthable, omniauth_providers: [:google_oauth2]
   # ===================================================
   # CALLBACKS
   # ===================================================
@@ -337,7 +340,27 @@ def accept_invitation!(email:, password:, password_confirmation:)
   skip_confirmation!
   save
 end
+# ===================================================
+# OMNIAUTH
+# ===================================================def self.from_omniauth(auth)
+def self.from_omniauth(auth)
+  user = where(provider: auth.provider, uid: auth.uid).first
+  user ||= where(email: auth.info.email).first_or_initialize do |u|
+    u.provider = auth.provider
+    u.uid = auth.uid
+  end
 
+  if user.new_record?
+    user.email = auth.info.email
+    user.password = Devise.friendly_token[0, 20]
+    user.first_name = auth.info.first_name.presence || auth.info.name.to_s.split(" ").first || ""
+    user.last_name = auth.info.last_name.presence || auth.info.name.to_s.split(" ").last || ""
+    user.skip_confirmation! if user.respond_to?(:skip_confirmation!)
+    # Don't save yet — identification fields are required
+  end
+
+  user
+end
   # ===================================================
   # PRIVATE METHODS
   # ===================================================
